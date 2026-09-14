@@ -1,0 +1,17 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  unit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DNETFORGE_ENABLE_SANITIZERS=ON
+      - name: Build
+        run: cmake --build build --parallel
+      - name: Unit tests
+        run: ctest --test-dir build --output-on-failure
