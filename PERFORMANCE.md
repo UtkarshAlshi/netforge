@@ -38,3 +38,24 @@ This wide interval provides no evidence of a worker speedup. During the run,
 10 additional CFS periods were throttled and throttled time rose404815 usec.
 The half-CPU cap is retained. This measures bounded offline dispatch with byte
 verification, not dedicated-core scaling, network throughput or delivery.
+
+## Maintained virtual-network comparison
+
+`tools/network_compare.py` runs48 counterbalanced reference/DPDK AF_PACKET PMD
+trials:64/128/512/1500-byte Ethernet frames, bursts1/4/16, two repetitions and64
+verified packets per trial. It requires the explicit hosted-container opt-in and
+already-created dedicated nf-source/nf-in/nf-out/nf-sink veths; it creates no
+interfaces or qdiscs. Both modes use the same restricted configuration, original
+UDP tuple and exact reference TTL/MAC/checksum bytes. The reference appliance
+also incurs its normal transport tracking, whereas the DPDK subset is stateless;
+this is a supported-workload comparison, not identical internal algorithms.
+
+Every injected packet has a unique payload token. Raw injection-to-capture
+monotonic timestamps, counts, trial order, frame size, burst, source configuration
+hash and executable hashes are retained. p50/p95/p99 use nearest-rank order
+statistics. Rates include generator, scheduler, receive/capture and idle-polling
+costs under the shared .5-CPU/512-MiB container cap. Ethernet preamble/FCS/IFG are
+excluded. Loss is missing injected tokens at this capture boundary, not a NIC
+hardware counter. No rate sweep, saturation estimate, hardware latency, confidence
+interval or speedup claim follows from these small functional trials. Physical
+NIC, Linux-kernel forwarding and XDP comparison and PMU profiling remain open.

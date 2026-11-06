@@ -147,3 +147,20 @@ fleet-outage-20261106-114929-23649: unavailable-member preflight, partial-state
 retention, no blind replay, explicit generation11 corrective convergence and
 clean shutdown. REMAINING.md is the current open-work ledger; historical roadmap
 bullets should not be treated as all still pending.
+
+### Current integration work — 2026-11-06
+
+Hosted run42224602962 passed Linux/macOS native tests, real DPDK capture/control,
+worker supervisor crash/pidfd recovery, and actual packet-socket receive pressure.
+Run42225940306 additionally passed real private-veth reordered/duplicate UDP and
+real dataplane publication through mTLS; macOS exposed incomplete test certificate
+extensions. Run42226575170 verified the strict certificate fix on both native
+platforms; its DPDK live-port queue setup failed due to mbuf headroom and is being
+corrected. These failed gates are not treated as completed acceptance.
+
+The current review branch adds a real continuous AF_PACKET DPDK PMD service,
+bounded reference backend traffic counters, a maintained serial verification
+entry point, and a small raw-observation network comparison. Their latest hosted
+acceptance must pass before a release claim. Static remote membership is explicit
+and authenticated; there is no consensus, automatic membership or independent
+machine failure-domain claim. No changes to main or release tags have been made.
