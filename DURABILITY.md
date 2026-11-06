@@ -75,3 +75,20 @@ the owned supervisor, recover8 with retained credentials/config, reject stale
 and immutable updates, restart10 and inspect real metrics. All owned test
 processes are shut down and private test state is retained. Existing topology,
 container lifetimes, Docker settings, host interfaces and dependencies are unchanged.
+
+
+## Opt-in durable worker configuration
+
+control/durable_worker_agent.py combines the check-workers/run-workers hooks
+with the same durable journal, acknowledged checkpoint, writer lock, stable token
+and exact-child recovery. --workers1|2 is required. Journal runtime_identity
+binds mode and count; reopening as a reference agent or different worker count
+is refused before signalling any child. Legacy journals without runtime identity
+remain compatible with reference recovery only.
+
+Example entry point uses the same --binary/--config/--state/--resume/
+--stop-owned-child/--port options as durable_agent, plus --workers2. Recovery
+advances beyond consumed high-water revisions. It restores configuration only;
+all flow state is lost. No individual owner-thread replacement, replicated flow
+state or seamless failover is promised. Native clean checkpoint/restart tests
+passed; real worker supervisor-crash/pidfd/traffic acceptance is prepared in CI.

@@ -82,3 +82,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
   add_test(NAME capture_supervisor COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/capture_agent_test.py
     $<TARGET_FILE:nf-xdp-compile> ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
+
+add_test(NAME durable_worker COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/durable_worker_test.py
+  $<TARGET_FILE:netforge> ${CMAKE_CURRENT_SOURCE_DIR})

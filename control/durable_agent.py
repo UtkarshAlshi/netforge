@@ -91,6 +91,9 @@ def revision(data, generation):
 
 
 class DurableAgent(Agent):
+    def runtime_identity(self):
+        return {"mode": "reference"}
+
     def __init__(self, binary, initial, state, resume=False, stop_owned_child=False):
         self.root = pathlib.Path(state)
         self.lock_fd = None
@@ -116,6 +119,8 @@ class DurableAgent(Agent):
                     raise ValueError("journal integrity failure")
                 if self.store.get("schema") != 1 or self.store.get("binary_sha256") != digest:
                     raise ValueError("journal schema or binary fingerprint mismatch")
+                if self.store.get("runtime_identity", {"mode": "reference"}) != self.runtime_identity():
+                    raise ValueError("checkpoint runtime mode/worker count mismatch")
                 saved = self.store["checkpoint"]
                 data = base64.b64decode(saved["data"], validate=True)
                 if not data or len(data) > MAX_CONFIG or saved["sha256"] != hashlib.sha256(data).hexdigest():
@@ -150,7 +155,7 @@ class DurableAgent(Agent):
                 atomic(self.active, data)
                 self.store.update(phase="prepared", child=None, candidate=None, high_water=generation)
             else:
-                self.store = {"schema": 1, "binary_sha256": digest, "phase": "prepared", "child": None,
+                self.store = {"schema": 1, "binary_sha256": digest, "runtime_identity": self.runtime_identity(), "phase": "prepared", "child": None,
                               "high_water": generation, "candidate": None, "checkpoint": checkpoint(data, generation, False)}
             self.token = token
             atomic(self.root / "token", token.encode())
@@ -178,7 +183,7 @@ class DurableAgent(Agent):
         self.store.update(phase="launching", child=None)
         self.write_journal()  # Unknown-PID crash window is explicit and fail-closed.
         try:
-            self.child = subprocess.Popen([self.binary, "run", str(self.active)], stdout=subprocess.PIPE,
+            self.child = subprocess.Popen(self.runtime_command(), stdout=subprocess.PIPE,
                                           stderr=subprocess.STDOUT, bufsize=0)
             self.reader = threading.Thread(target=self.read_logs, daemon=True); self.reader.start()
             self.store["child"] = identity(self.child.pid)

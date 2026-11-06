@@ -24,11 +24,12 @@ claim requires resolving these items or an explicitly agreed scope change.
 
 ## Remaining functional work
 
-1. Broader DPDK service/control integration beyond the bounded capture adapter.
-   Preserve explicit feature rejection and mbuf ownership; do not rename capture
-   replay a continuous stateful service.
-2. Worker failure/recovery contract beyond orderly owner shutdown and local
-   exceptions; dynamic discovery/global least-connections remain unsupported.
+1. DPDK continuous live-I/O service beyond finite captures remains open. The
+   generalized capture path and authenticated bounded capture-job control now
+   passed actual hosted DPDK acceptance; they do not imply live NIC semantics.
+2. Durable worker configuration restart is implemented with mode/count binding;
+   real supervisor-crash/pidfd/traffic acceptance is pending hosted CI. Individual
+   owner replacement, dynamic discovery/global least-connections remain unsupported.
 3. Broader fault matrix: controlled reordering and additional TCP/ICMP failure
    boundaries/recovery; deterministic complete-loss UDP interval has now passed.
 4. Per-backend traffic observability and pre-receive socket-drop provenance.

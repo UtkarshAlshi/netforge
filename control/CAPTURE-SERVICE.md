@@ -34,4 +34,4 @@ remote transport or physical NIC delivery is implied.
 
 Lifecycle tests use controlled children; separate hosted acceptance exercises
 authenticated HTTP against real DPDK and checks exact multi-route capture counts.
-Both are prepared; execution status is tracked in VERIFICATION.md.
+Both passed hosted Linux acceptance in run42222608259. See VERIFICATION.md.

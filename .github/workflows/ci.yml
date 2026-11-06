@@ -47,7 +47,7 @@ jobs:
       - name: Run actual DPDK in capped ephemeral container
         shell: bash
         run: |
-          docker create --name netforge-hosted-dpdk --memory 512m --memory-swap 512m --cpus 0.5 --pids-limit 128 --env NETFORGE_HOSTED_DPDK=1 ubuntu:24.04 sh /tmp/hosted_dpdk.sh
+          docker create --name netforge-hosted-dpdk --memory 512m --memory-swap 512m --cpus 0.5 --pids-limit 128 --env NETFORGE_HOSTED_DPDK=1 --cap-add NET_ADMIN --cap-add NET_RAW --sysctl net.ipv4.ip_forward=0 ubuntu:24.04 sh /tmp/hosted_dpdk.sh
           docker cp "$RUNNER_TEMP/netforge-dpdk-source.tar.gz" netforge-hosted-dpdk:/tmp/netforge-source.tar.gz
           docker cp tools/hosted_dpdk.sh netforge-hosted-dpdk:/tmp/hosted_dpdk.sh
           docker start -a netforge-hosted-dpdk

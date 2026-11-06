@@ -1146,3 +1146,22 @@ optional loopback capture supervisor. One fixed input/config, four jobs, pidfd
 signals, bounded logs/deadline and idempotent request IDs; finite PCAP jobs only.
 Linux lifecycle tests and real HTTP/DPDK acceptance are prepared in hosted CI.
 Python/shell syntax checks passed; these new lifecycle paths are not yet verified.
+
+
+## Hosted real DPDK/capture service — 2026-11-06
+
+Run42222608259/commit976651546b7a9e04114808e079f87c356119b8e3 passed Ubuntu,
+macOS and capped hosted DPDK. DPDK23.11.7 passed312 corpus/19 reference cases,
+TX7/unsent9/all255 mbufs reclaimed,163-record PCAP parity/malformed/budget/
+SIGTERM gates, three-rule/two-route parity and pre-EAL mismatch refusal. Real
+authenticated capture service start/status/stop, retry idempotency, exact counts,
+scoped inputs and owned shutdown passed. Linux21-test suite passed inside512 MiB/
+.5CPU/128PIDs. Evidence:netforge-live/github-dpdk-20261106/report.json.
+
+Subsequent durable worker adapter persists runtime mode/count and uses generic
+runtime command hooks; native durable worker clean restart and full native
+reference durability regression passed. Hosted private-veth acceptance is
+prepared for real worker traffic, acknowledged checkpoint2, killed supervisor,
+wrong mode/count refusal, explicit pidfd orphan stop, recovered3, deny4, rejected5
+and clean restart6. It uses NET_ADMIN/NET_RAW only inside the hosted container
+with forwarding0; no host mounts/NIC/hugepages. Actual new execution pending.
