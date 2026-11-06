@@ -14,27 +14,18 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-      - name: Configure
-        run: cmake -S . -B build -DNETFORGE_SANITIZERS=ON -DCMAKE_BUILD_TYPE=Debug
-      - name: Build serially
-        run: cmake --build build --parallel 1
-      - name: Tests
-        run: ctest --test-dir build --output-on-failure
-      - name: Offline provisioning safety checks
-        run: python3 tests/lab_plan_test.py
-      - name: Verify source package and operator demo
-        shell: bash
-        run: |
-          python3 tools/package_source.py "$RUNNER_TEMP/netforge-source.tar.gz"
-          python3 tools/unpack_verified.py "$RUNNER_TEMP/netforge-source.tar.gz" "$RUNNER_TEMP/netforge-unpacked"
-          python3 tools/run_demo.py build/netforge "$RUNNER_TEMP/netforge-demo"
+      - name: Serial verification entry point
+        run: python3 tools/verify.py --sanitizers --output "$RUNNER_TEMP/netforge-verification"
       - name: Retain bounded verification artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: verification-${{ matrix.os }}
           path: |
-            ${{ runner.temp }}/netforge-source.tar.gz
-            ${{ runner.temp }}/netforge-demo
+            ${{ runner.temp }}/netforge-verification/source.tar.gz
+            ${{ runner.temp }}/netforge-verification/demo
+            ${{ runner.temp }}/netforge-verification/report.json
+            ${{ runner.temp }}/netforge-verification/step-*.log
           retention-days: 3
           if-no-files-found: error
   dpdk-runtime:

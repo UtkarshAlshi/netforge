@@ -3,6 +3,7 @@
 import argparse
 import concurrent.futures
 import hashlib
+import http.client
 import json
 import pathlib
 import ssl
@@ -71,7 +72,7 @@ def observe(nodes):
             status = request(node, 'GET', '/v1/status')
             result.update(reachable=True, running=bool(status.get('running')),
                           uncertain=bool(status.get('uncertain')), generation=status.get('generation'))
-        except (OSError, ValueError, RuntimeError) as error:
+        except (OSError, ValueError, RuntimeError, http.client.HTTPException) as error:
             result['error'] = type(error).__name__
         result['observation_seconds'] = round(time.monotonic() - started, 6)
         return result

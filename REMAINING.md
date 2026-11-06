@@ -28,16 +28,18 @@ claim requires resolving these items or an explicitly agreed scope change.
    generalized capture path and authenticated bounded capture-job control now
    passed actual hosted DPDK acceptance; they do not imply live NIC semantics.
 2. Durable worker configuration restart is implemented with mode/count binding;
-   real supervisor-crash/pidfd/traffic acceptance is pending hosted CI. Individual
+   real supervisor-crash/pidfd/traffic acceptance passed hosted CI42224602962. Individual
    owner replacement, dynamic discovery/global least-connections remain unsupported.
 3. Broader fault matrix: controlled reordering and additional TCP/ICMP failure
    boundaries/recovery; deterministic complete-loss UDP interval has now passed.
-4. Per-backend traffic observability and pre-receive socket-drop provenance.
+4. Per-backend traffic observability remains open. Actual pre-receive packet-socket
+   pressure/drop provenance passed hosted CI42224602962.
    Per-endpoint health observation metrics now passed live acceptance. Reference
    per-rule exports are capped16; worker/XDP per-rule exports are not implemented.
-5. General deployment/control scope: secure remote channel/node membership and
-   independent failure domains remain unimplemented; management is loopback-only.
-   Durable worker/XDP restart and stateful XDP exception fallback are not provided.
+5. General deployment/control scope: explicit mTLS remote transport/static membership
+   is implemented and undergoing hosted acceptance. Independent failure domains
+   and automatic membership/failover remain unverified.
+   Durable XDP restart and stateful XDP exception fallback are not provided.
 
 ## Remaining experiment and release work
 
@@ -58,8 +60,8 @@ novelty claim is conditional; code cannot certify interview understanding.
 ## Execution constraints
 
 Keep manual Docker output gates,2-CPU/~2-GiB VM,512-MiB builder,128-MiB lab caps,
-serial builds,10-GiB Mac disk guard. Latest local DPDK attempt observed8.89 GiB and stopped before execution.
-The10-GiB guard currently blocks local build expansion.
+serial builds,10-GiB Mac disk guard. Latest local read-only check observed10.19 GiB: guard passes narrowly.
+Heavy verification now runs on hosted ephemeral CI, without Mac Docker expansion.
 Approved deletion of11 obsolete builder directories completed; no further deletion
 is authorized. Avoid build/install/container expansion at this narrow margin. No-build focused
 checks may resume after their own guard check; source-only work can continue. Reuse

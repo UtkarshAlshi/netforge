@@ -58,10 +58,19 @@ with tempfile.TemporaryDirectory() as temp:
         openssl('x509', '-req', '-in', role + '.csr', '-CA', 'ca.pem', '-CAkey', 'ca.key',
                 '-CAcreateserial', '-days', '1', '-extfile', 'extensions', '-out', role + '.pem')
         (root / (role + '.key')).chmod(0o600)
-    (root / 'token').write_text(Engine.token); (root / 'token').chmod(0o600)
-    (root / 'next.conf').write_text('version 2\n')
-    engine = Engine()
+    live = len(sys.argv) == 3
+    if live:
+        from agent import Agent
+        initial = pathlib.Path(sys.argv[1]) / 'examples/workers-veth.conf'
+        engine = Agent(sys.argv[2], initial, root / 'agent')
+        candidate = initial.read_text().replace('version 1', 'version 2')
+    else:
+        engine, candidate = Engine(), 'version 2\n'
+    (root / 'token').write_text(engine.token); (root / 'token').chmod(0o600)
+    (root / 'next.conf').write_text(candidate)
     server = SecureServer(('127.0.0.1', 0), engine, 'node-a', root / 'server.pem', root / 'server.key', root / 'ca.pem')
+    if live:
+        engine.start()
     thread = threading.Thread(target=server.serve_forever, daemon=True); thread.start()
     try:
         manifest = [{'name': 'a', 'node_id': 'node-a', 'url': 'https://127.0.0.1:' + str(server.server_port),
@@ -83,7 +92,13 @@ with tempfile.TemporaryDirectory() as temp:
         journal = Journal(root / 'journal', nodes)
         try:
             assert journal.run(nodes)['states'] == ['verified']
-            assert journal.run(nodes)['states'] == ['verified'] and engine.posts == 1
+            assert journal.run(nodes)['states'] == ['verified']
+            assert engine.generation == 2
+            if live:
+                assert len(engine.publication_audit()['events']) == 1
+                assert 'netforge_tx_failures_total 0\n' in engine.snapshot()
+            else:
+                assert engine.posts == 1
         finally:
             journal.close()
         changed = [{**nodes[0], 'transport_identity': '0' * 64}]
@@ -96,5 +111,10 @@ with tempfile.TemporaryDirectory() as temp:
     finally:
         server.shutdown(); server.server_close(); thread.join(3)
         assert not thread.is_alive()
+        if live:
+            engine.close()
 print('PASS: real TLS1.3 mutual authentication, bearer and node binding, private-key refusal, static membership and journaled idempotent rollout')
 print('PASS: missing client certificate, untrusted server, wrong node/token and changed transport plan refused')
+
+if len(sys.argv) == 3:
+    print('PASS: actual reference dataplane acknowledged TLS journal publication, idempotent reconciliation and metrics on private veth')

@@ -35,5 +35,16 @@ offline core timing, not physical NIC throughput or network latency.
 
 Hosted CI workflow is prepared for Ubuntu24.04/macOS15 sanitizer builds, CTest,
 lab-plan safety, source-package verification/extraction and bounded offline demo
-artifacts. It has not been remotely executed. A repository destination and
-publication authorization must be established before claiming hosted acceptance.
+artifacts. Hosted run42224602962 passed Linux/macOS native verification and real DPDK,
+worker crash recovery and packet-socket pressure acceptance. Subsequent source
+changes require their own passing run. Draft PR1 remains unmerged.
+
+The maintained portable entry point is `python3 tools/verify.py --sanitizers
+--output /absolute/new/output`. It performs serial build, bounded CTest, lab-plan
+safety, manifest packaging/extraction and offline demo without installation,
+Docker execution or NIC changes. CMake3.20+, a C++20 compiler, Python3 and
+OpenSSL CLI are prerequisites. Hosted CI also verifies from a fresh Ubuntu image
+using tools/hosted_dpdk.sh under a512-MiB/no-swap/.5-CPU/128-PID cap. Dependencies
+are fetched through Ubuntu repositories there; this is not a fully offline or
+bit-identical dependency lock. Optional XDP tests still require the documented
+Linux capabilities and kernel support.

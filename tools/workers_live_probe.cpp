@@ -107,6 +107,43 @@ int main(int argc, char** argv) {
             std::cout << "PASS: injected10000 private-veth frames for socket pressure test\n";
             return 0;
         }
+        if (argc == 2 && std::string(argv[1]) == "--reordered") {
+            Socket source("nf-source"), sink("nf-sink");
+            // One flow pins all deliberately reordered/duplicate packets to one owner.
+            std::array<std::array<unsigned char, 64>, 18> returns{};
+            const std::array<unsigned, 18> order{15, 0, 14, 1, 13, 2, 12, 3, 11, 4, 10, 5, 9, 6, 8, 7, 3, 15};
+            unsigned nat = 0;
+            for (unsigned token : order) {
+                std::array<unsigned char, 64> packet{}; nf_fixture_packet(packet.data());
+                nf_put16(packet.data() + 34, 10000); packet[42] = static_cast<unsigned char>(token);
+                repair(packet.data()); require(send(source.fd, packet.data(), 64, 0) == 64, "reordered injection");
+            }
+            for (unsigned index = 0; index < order.size(); ++index) {
+                auto packet = receive(sink.fd); auto checked = packet; repair(checked.data());
+                require(checked == packet && packet[42] == order[index] && packet[22] == 63 &&
+                        nf_u32(packet.data() + 26) == 0x0a590001 && nf_u32(packet.data() + 30) == 0x0a590002 &&
+                        nf_u16(packet.data() + 36) == 9000, "reordered forward payload/tuple/checksum");
+                const unsigned allocated = nf_u16(packet.data() + 34);
+                if (!nat) nat = allocated;
+                require(allocated == nat && nat >= 40000 && nat <= 40031, "reordered flow affinity");
+                const unsigned char destination[6] = {2, 0x89, 0, 0, 0, 1}, peer[6] = {2, 0x89, 0, 0, 0, 2};
+                std::memcpy(packet.data(), destination, 6); std::memcpy(packet.data() + 6, peer, 6);
+                packet[29] = 2; packet[33] = 1;
+                nf_put16(packet.data() + 34, 9000); nf_put16(packet.data() + 36, static_cast<__u16>(nat));
+                packet[22] = 64; repair(packet.data()); returns[index] = packet;
+            }
+            for (auto it = returns.rbegin(); it != returns.rend(); ++it)
+                require(send(sink.fd, it->data(), 64, 0) == 64, "reordered reverse injection");
+            for (unsigned index = 0; index < order.size(); ++index) {
+                auto packet = receive(source.fd); auto checked = packet; repair(checked.data());
+                require(checked == packet && packet[42] == order[order.size() - 1 - index] && packet[22] == 63 &&
+                        nf_u32(packet.data() + 26) == 0x0a590002 && nf_u32(packet.data() + 30) == 0x0a580002 &&
+                        nf_u16(packet.data() + 34) == 9000 && nf_u16(packet.data() + 36) == 10000,
+                        "reordered reverse payload/tuple/checksum");
+            }
+            std::cout << "PASS:18 deliberately reordered/duplicate same-flow UDP frames in each direction preserve payloads, NAT tuple, checksums and affinity\n";
+            return 0;
+        }
         const bool udp_only = argc == 2 && std::string(argv[1]) == "--udp-only";
         const bool deny_new = argc == 2 && std::string(argv[1]) == "--deny-new";
         require(argc == 1 || udp_only || deny_new, "invalid probe mode");

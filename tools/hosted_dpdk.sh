@@ -25,6 +25,7 @@ python3 "$src/tests/dpdk_config_test.py" /tmp/nf-dpdk-ring /tmp/netforge-build/n
 python3 "$src/tests/capture_agent_http_test.py" /tmp/nf-dpdk-ring /tmp/netforge-build/nf-xdp-compile "$out/multi-cases/multi.conf" "$out/multi-cases/input.pcap" "$src" "$out/capture-service.json"
 g++ -std=c++20 -O2 -Wall -Wextra -Wpedantic -Werror "$src/tools/workers_live_probe.cpp" -o /tmp/netforge-worker-probe
 python3 "$src/tests/durable_worker_live_test.py" /tmp/netforge-build/netforge /tmp/netforge-worker-probe "$src" "$out/durable-worker.json"
+python3 "$src/tests/secure_node_test.py" "$src" /tmp/netforge-build/netforge
 cp "$src/SOURCE-MANIFEST.sha256" "$out/SOURCE-MANIFEST.sha256"
 cp /tmp/netforge-sdk/install.log "$out/dependencies.log"
 echo 'PASS: hosted real DPDK corpus, capture, policy identity, multi-route parity and bounded cleanup'

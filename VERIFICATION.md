@@ -1183,3 +1183,15 @@ deltas with availability/read-error indicators. New hosted pressure gate stops
 the owned engine via pidfd, injects10000 frames on its private ingress, resumes,
 and requires increased kernel drops plus monotonic snapshots and two available
 ports. Actual new statistics/pressure execution pending.
+
+### Hosted worker recovery and packet-socket pressure — 2026-11-06
+
+Run42224602962 at4d1ee31301c736a7d3be5b9c308ba6e75028534e passed Linux/macOS
+and capped DPDK/live acceptance. Real worker supervisor SIGKILL leaves the child;
+mode/count mismatch refuses to signal it; explicit pidfd recovery stops the exact
+orphan and cold-starts acknowledged configuration. UDP/TCP traffic resumes,
+reload/rejection and generation high-water hold. Flow-state survival is not
+claimed. A stopped owned engine plus10000 private-veth frames produces observed
+packet-socket drops; successive reset-on-read samples accumulate monotonically
+with both ports available and zero statistics-read errors. These are receive-queue
+drops, not physical NIC loss or policy-denial counts.

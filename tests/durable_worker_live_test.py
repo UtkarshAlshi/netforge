@@ -61,6 +61,7 @@ try:
     metrics=agent.snapshot()
     assert all(f'netforge_worker_flows{{owner="{owner}"}} 0\n' in metrics for owner in (0,1))
     traffic()
+    traffic('--reordered')
     denied=revision2.replace(b'version 2',b'version 4').replace(b'acl allow lan udp',b'acl deny lan udp')
     assert agent.publish(3,denied)['generation']==4
     traffic('--udp-only');traffic('--deny-new')
