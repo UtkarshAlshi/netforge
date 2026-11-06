@@ -88,3 +88,7 @@ add_test(NAME durable_worker COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURC
 
 add_test(NAME secure_nodes COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/secure_node_test.py
   ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_test(NAME portable_demo COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/demo_test.py
+  $<TARGET_FILE:netforge> ${CMAKE_CURRENT_SOURCE_DIR})
+add_test(NAME documentation COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/check_docs.py)

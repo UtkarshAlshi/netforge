@@ -7,6 +7,7 @@ from pathlib import Path
 import struct
 import subprocess
 from generate_demo import frame, checksum
+from render_demo import render
 
 
 def main():
@@ -57,6 +58,7 @@ def main():
         (args.output/(name+'.metrics')).write_text(result.stderr)
         report['cases'][name]={'verified':True,'packets':len(packets),'reasons':[d['reason'] for d in decisions]}
     (args.output/'report.json').write_text(json.dumps(report,indent=2)+'\n')
+    (args.output/'index.html').write_text(render(args.output), encoding='utf-8')
     print('PASS: five offline demo cases, independent checksums, NAT tuple and service affinity; report='+str(args.output))
 
 if __name__=='__main__':

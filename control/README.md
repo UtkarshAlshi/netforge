@@ -74,7 +74,7 @@ It stops at the first failure and reports already-published nodes. This is a
 bounded distributed delivery client, **not distributed consensus or a fleet-wide
 atomic transaction**. Fix partial rollouts by preparing a higher generation for
 all affected nodes. Reverting behavior requires a new generation, not reuse of an
-old version number. Live multi-node validation remains pending.
+old version number. Live multi-agent partial rollout and endpoint outage/rejoin acceptance passed; these were logical agents on one host, not independent-machine failure domains.
 
 ## Backend draining
 
@@ -160,3 +160,11 @@ publisher per agent. Protect the private token/state directories.
 The new authenticated GET `/v1/config` returns the acknowledged generation and
 config text. It refuses uncertain/stopped dataplanes. It exposes configuration
 only to the same authenticated local operator already authorized to publish it.
+
+## Other maintained supervisors
+
+- [Mutual TLS/static nodes](SECURE-NODES.md): explicit authenticated remote transport.
+- [Capture jobs](CAPTURE-SERVICE.md): bounded real DPDK PCAP jobs.
+- [Durable configuration recovery](../docs/reference/durability.md): reference and
+  worker mode/count-bound checkpoints. Cold restart loses connection state.
+- [Current capability matrix](../docs/capabilities.md) and [results](../docs/results.md).

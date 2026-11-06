@@ -169,5 +169,5 @@ use non-cryptographic hashing; adversarial collision hardening remains future wo
 
 The source exposes mode/index occupancy gauges. Both paths run the complete core
 regression suite; CLI replay decisions are compared. Native checks pass; Linux
-A/B/live indexed acceptance remains pending. Do not assume the indexed path is
+A/B/live indexed acceptance passed during the recorded development runs. Do not assume the indexed path is
 faster for every workload before examining the paired measurements.

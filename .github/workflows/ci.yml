@@ -16,6 +16,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Serial verification entry point
         run: python3 tools/verify.py --sanitizers --output "$RUNNER_TEMP/netforge-verification"
+      - name: One-command demo from source
+        run: python3 tools/demo.py --output "$RUNNER_TEMP/netforge-presentation"
       - name: Retain bounded verification artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -26,6 +28,7 @@ jobs:
             ${{ runner.temp }}/netforge-verification/demo
             ${{ runner.temp }}/netforge-verification/report.json
             ${{ runner.temp }}/netforge-verification/step-*.log
+            ${{ runner.temp }}/netforge-presentation/packets
           retention-days: 3
           if-no-files-found: error
   dpdk-runtime:
