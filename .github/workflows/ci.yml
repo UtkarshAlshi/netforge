@@ -6,19 +6,26 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   native:
     strategy:
       matrix:
-        os: [ubuntu-24.04, macos-15]
+        os: ${{ fromJSON(github.event_name == 'workflow_dispatch' && '["ubuntu-24.04","macos-15"]' || '["ubuntu-24.04"]') }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - name: Serial verification entry point
         run: python3 tools/verify.py --sanitizers --output "$RUNNER_TEMP/netforge-verification"
       - name: One-command demo from source
+        env:
+          CXX: c++ -pthread
         run: python3 tools/demo.py --output "$RUNNER_TEMP/netforge-presentation"
       - name: Demo without CMake
+        env:
+          CXX: c++ -pthread
         run: python3 tools/demo.py --build-system direct --output "$RUNNER_TEMP/netforge-direct-demo"
       - name: Retain bounded verification artifacts
         if: always()
@@ -35,6 +42,7 @@ jobs:
           retention-days: 3
           if-no-files-found: error
   dpdk-runtime:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:

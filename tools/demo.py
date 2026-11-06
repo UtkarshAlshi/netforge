@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import platform
 import shutil
+import shlex
 import subprocess
 import sys
 
@@ -21,10 +22,10 @@ def direct_build(project, build, compiler):
     objects = []
     for name in ('ethernet', 'ipv4', 'tcp', 'config', 'scheduler', 'appliance', 'workers', 'main', 'linux_io'):
         target = build / (name + '.o')
-        subprocess.run([compiler, *flags, '-c', str(project / 'src' / (name + '.cpp')), '-o', str(target)],
+        subprocess.run([*compiler, *flags, '-c', str(project / 'src' / (name + '.cpp')), '-o', str(target)],
                        env=environment, check=True, timeout=120)
         objects.append(str(target))
-    subprocess.run([compiler, *flags, *objects, '-o', str(build / 'netforge')],
+    subprocess.run([*compiler, *flags, *objects, '-o', str(build / 'netforge')],
                    env=environment, check=True, timeout=60)
     return build / 'netforge'
 
@@ -51,14 +52,20 @@ def main():
             parser.error('--binary must point to an executable regular file')
     else:
         cmake = shutil.which('cmake')
-        compiler = shutil.which(os.environ.get('CXX', 'c++'))
         selected = 'cmake' if args.build_system == 'auto' and cmake else args.build_system
         if selected == 'auto':
             selected = 'direct'
         if selected == 'cmake' and not cmake:
             parser.error('CMake is not installed. Use --build-system direct with your existing C++20 compiler.')
-        if not compiler:
-            parser.error('No C++ compiler found. Install your platform development tools before building.')
+        if selected == 'direct':
+            try:
+                compiler = shlex.split(os.environ.get('CXX', 'c++'))
+            except ValueError:
+                parser.error('CXX contains invalid quoting')
+            executable = shutil.which(compiler[0]) if compiler else None
+            if not executable:
+                parser.error('No C++ compiler found. Install your platform development tools before building.')
+            compiler[0] = executable
     # All dependency/path preflight happens before creating output. Never leave an
     # empty destination merely because CMake/compiler/binary is missing.
     output.mkdir(mode=0o700)

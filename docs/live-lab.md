@@ -7,7 +7,8 @@ Docker image or special capabilities. Live lab setup is separate and optional.
 
 The repository workflow is the maintained fresh-environment live acceptance path:
 [Actions → build-and-test](https://github.com/UtkarshAlshi/netforge/actions/workflows/ci.yml).
-On a fork you control, select **Run workflow**. It performs native checks and
+On a fork you control, select **Run workflow**. This explicitly requested run
+performs Linux/macOS native checks and
 creates an ephemeral Ubuntu24.04 Docker container capped at512MiB/no swap,
 0.5CPU and128PIDs. It creates private veths only inside that container, exercises
 real reference/worker/DPDK traffic and faults, and uploads sanitized reports.
@@ -16,6 +17,11 @@ use hugepages or change your Mac. Dependency installation happens on the hosted
 runner's disposable container. Inspect `.github/workflows/ci.yml` and
 `tools/hosted_dpdk.sh` for the exact commands. Artifacts expire after three days;
 small final-release raw observations are permanently committed in `results/`.
+
+Automatic push/PR runs use the fast Linux portable checks only. Extra macOS/live
+jobs are manual to avoid unnecessary hosted queues; superseded same-ref runs are
+cancelled through workflow concurrency. CI has no cron/recurring trigger. Failed
+historical entries are completed records, not processes running on your Mac.
 
 ## Existing local Docker lab helper
 
