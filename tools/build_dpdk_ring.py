@@ -12,6 +12,10 @@ packages = {"librte-net-ring24": "librte_net_ring.so.24",
             "librte-ethdev24": "librte_ethdev.so.24", "librte-mbuf24": "librte_mbuf.so.24",
             "librte-mempool24": "librte_mempool.so.24", "librte-ring24": "librte_ring.so.24",
             "librte-eal24": "librte_eal.so.24"}
+live = os.environ.get("NETFORGE_DPDK_AF_PACKET") == "1"
+if live:
+    packages.update({"librte-net-af-packet24": "librte_net_af_packet.so.24",
+                     "librte-bus-vdev24": "librte_bus_vdev.so.24"})
 libraries = []
 for package, name in packages.items():
     paths = subprocess.check_output(["dpkg-query", "-L", package], text=True).splitlines()
@@ -30,7 +34,7 @@ else:
 arguments = ["g++", "-std=c++20", "-O2", "-Wall", "-Wextra", "-Wpedantic", "-Werror",
              "-isystem", str(sdk / "headers/usr/include/dpdk"),
              "-isystem", str(sdk / ("headers/usr/include/" + triplet + "/dpdk")),
-             "-I", str(source / "include"), str(source / "backends/dpdk/ring_check.cpp"),
+             "-I", str(source / "include"), str(source / ("backends/dpdk/live.cpp" if live else "backends/dpdk/ring_check.cpp")),
              *core_inputs,
              "-Wl,--no-as-needed", *libraries,
              "-Wl,--as-needed", "-pthread", "-ldl", "-o", str(output)]
@@ -41,4 +45,4 @@ if triplet.startswith('x86_64'):
 for directory in sorted({str(pathlib.Path(path).parent) for path in libraries}):
     arguments.append("-Wl,-rpath," + directory)
 subprocess.run(arguments, check=True, timeout=120)
-print("PASS: real DPDK ring-PMD acceptance binary compiled", flush=True)
+print("PASS: real DPDK " + ("AF_PACKET service" if live else "ring-PMD acceptance") + " binary compiled", flush=True)

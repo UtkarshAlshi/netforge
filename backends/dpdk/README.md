@@ -136,3 +136,27 @@ different policy than the configuration used by the reference oracle.
 Native ASan/UBSan binding tests passed. Actual multi-policy capture acceptance
 is pending the expanded dpdk-pcap-batch.sh. This does not add a continuous NIC
 service, hot reload, remote API or stateful DPDK semantics.
+
+## Continuous virtual-port service
+
+`live.cpp` provides a separate real AF_PACKET PMD receive/transmit loop on two
+explicit Linux interfaces. It uses DPDK's PACKET_MMAP driver, not the synthetic
+ring-PMD adapter. Build with `NETFORGE_DPDK_AF_PACKET=1` and the matching restricted
+SDK/runtime. Invoke `nf-dpdk-live CONFIG POLICY.bin IN_IFACE OUT_IFACE SECONDS`.
+The checked config must bind lan/wan to those exact interfaces; policy bindings
+remain logical1/2. Duration is1..300 seconds, with early SIGTERM/SIGINT stop. No
+PCI devices or hugepages are used. One lcore,32-MiB EAL,255 mbufs,32-packet bursts,
+one queue/port and256 PACKET_MMAP frames bound allocations. Idle polling sleeps
+one millisecond. This is a safe functional service, not a tuned line-rate design.
+Successful TX transfers ownership to the PMD; unsent mbufs are freed once.
+Counters distinguish routed, policy drops, exceptions discarded and unsent TX.
+Exceptions have no stateful fallback; do not deploy this as a NAT appliance.
+
+Use only dedicated isolated Linux lab interfaces with NET_RAW. There is no
+interface creation, address/route change, published port, device rebinding, host
+mount or automatic deletion in this executable. It does open raw PMD sockets and
+transmit selected frames. Configuration replacement and HTTP supervision for this
+mode are not implemented; stop and explicitly restart after validation. Hosted
+acceptance checks private-veth byte parity, negative controls and clean shutdown.
+Physical NIC, NUMA and cross-backend performance measurements remain separate.
+Driver options follow https://doc.dpdk.org/guides-23.11/nics/af_packet.html .

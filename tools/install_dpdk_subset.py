@@ -19,6 +19,8 @@ def fields(text):
 def main():
     if platform.system() != "Linux" or os.environ.get("NETFORGE_DPDK_BUILD_CONTAINER") != "1":
         raise SystemExit("Use only in the existing capped NetForge builder")
+    if os.environ.get("NETFORGE_DPDK_AF_PACKET") == "1":
+        PACKAGES.append("librte-net-af-packet24")
     sdk = pathlib.Path(sys.argv[1])
     sdk.mkdir(parents=True, exist_ok=False)
     result = subprocess.run(["apt-get", "--simulate", "--no-install-recommends", "install", *PACKAGES],

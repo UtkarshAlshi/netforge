@@ -37,6 +37,7 @@ def main():
                 result = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, timeout=600)
             results.append({'step': index, 'returncode': result.returncode})
             if result.returncode:
+                print((out / ('step-%02d.log' % index)).read_text(errors='replace')[-16000:], flush=True)
                 raise RuntimeError('verification failed; inspect step-%02d.log' % index)
         print('PASS: serial build, tests, lab-plan safety, source archive and offline demo')
     finally:

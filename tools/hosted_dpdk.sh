@@ -13,7 +13,7 @@ apt-get install -y --no-install-recommends g++ cmake make python3 ca-certificate
 tar -xzf /tmp/netforge-source.tar.gz -C /tmp
 src=/tmp/netforge
 out=/tmp/netforge-results
-NETFORGE_DPDK_BUILD_CONTAINER=1 python3 "$src/tools/install_dpdk_subset.py" /tmp/netforge-sdk
+NETFORGE_DPDK_AF_PACKET=1 NETFORGE_DPDK_BUILD_CONTAINER=1 python3 "$src/tools/install_dpdk_subset.py" /tmp/netforge-sdk
 cmake -S "$src" -B /tmp/netforge-build -DCMAKE_BUILD_TYPE=Release
 cmake --build /tmp/netforge-build --parallel 1
 ctest --test-dir /tmp/netforge-build --output-on-failure --timeout 40
@@ -26,6 +26,8 @@ python3 "$src/tests/capture_agent_http_test.py" /tmp/nf-dpdk-ring /tmp/netforge-
 g++ -std=c++20 -O2 -Wall -Wextra -Wpedantic -Werror "$src/tools/workers_live_probe.cpp" -o /tmp/netforge-worker-probe
 python3 "$src/tests/durable_worker_live_test.py" /tmp/netforge-build/netforge /tmp/netforge-worker-probe "$src" "$out/durable-worker.json"
 python3 "$src/tests/secure_node_test.py" "$src" /tmp/netforge-build/netforge
+NETFORGE_DPDK_AF_PACKET=1 NETFORGE_DPDK_CORE_ARCHIVE=/tmp/netforge-build/libnetforge_core.a python3 "$src/tools/build_dpdk_ring.py" "$src" /tmp/netforge-sdk /tmp/nf-dpdk-live
+python3 "$src/tests/dpdk_live_test.py" /tmp/nf-dpdk-live /tmp/netforge-build/nf-xdp-compile /tmp/netforge-build/netforge "$src" "$out/dpdk-live.json"
 cp "$src/SOURCE-MANIFEST.sha256" "$out/SOURCE-MANIFEST.sha256"
 cp /tmp/netforge-sdk/install.log "$out/dependencies.log"
 echo 'PASS: hosted real DPDK corpus, capture, policy identity, multi-route parity and bounded cleanup'
