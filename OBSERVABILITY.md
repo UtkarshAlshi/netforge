@@ -42,9 +42,8 @@ Per configured port (at most 16), five fixed series are emitted:
 Aggregate tx_sent_total / tx_failures_total remain available. rx_oversize_total
 counts rejected oversized frames separately. Ethernet bytes exclude FCS/preamble/
 inter-frame gap and cannot be used directly as physical-wire bandwidth. Socket
-send success is not proof of delivery to an application or physical NIC. Kernel/
-socket drops before receive are not measured here; there is no end-to-end packet
-loss or latency measurement in these counters.
+send success is not proof of delivery to an application or physical NIC. Packet-socket receive queue statistics are now sampled separately as described
+below; there is still no end-to-end packet loss or latency measurement in these counters.
 
 ## Process resources
 
@@ -126,3 +125,21 @@ reconfirm config identity before exporting. The offline metrics view groups
 these separately as Backend health. No HTTP server or polling service is added.
 Native checker/controller tests and real Linux metrics export passed on2026-11-06
 in health-fault-20261106-121322-27458.
+
+
+## Linux packet-socket queue provenance
+
+Four fixed aggregate series are added, without per-flow labels:
+packet_socket_packets_total, packet_socket_drops_total,
+packet_socket_statistics_read_errors_total and
+packet_socket_statistics_available_ports (all prefixed netforge_).
+PACKET_STATISTICS resets kernel counters on read; the adapter accumulates deltas
+on roughly1-second loop opportunities and each report. Scheduling starvation
+can delay samples;32-bit kernel counters can wrap between sufficiently distant
+reads. Process restart resets the aggregate. Packet/drop totals are omitted
+until at least one successful sample; availability/errors indicate incomplete
+sampling. These count kernel socket observations, which can include outgoing
+frames discarded by the userspace adapter, and differ from accepted-size RX/core
+decisions. They are not NIC-wide drops, policy denies or end-to-end delivery loss.
+See https://man7.org/linux/man-pages/man7/packet.7.html for reset semantics.
+Hosted forced-pressure acceptance is prepared, not yet passed.

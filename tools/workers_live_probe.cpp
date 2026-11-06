@@ -99,6 +99,14 @@ int main(int argc, char** argv) {
             require(kill(pid, SIGHUP) == 0, "harness reload signal");
             return 0;
         }
+        if (argc == 2 && std::string(argv[1]) == "--flood") {
+            Socket source("nf-source"); std::array<unsigned char, 64> packet{};
+            nf_fixture_packet(packet.data()); repair(packet.data());
+            for (unsigned index = 0; index < 10000; ++index)
+                require(send(source.fd, packet.data(), packet.size(), 0) == static_cast<ssize_t>(packet.size()), "bounded flood injection");
+            std::cout << "PASS: injected10000 private-veth frames for socket pressure test\n";
+            return 0;
+        }
         const bool udp_only = argc == 2 && std::string(argv[1]) == "--udp-only";
         const bool deny_new = argc == 2 && std::string(argv[1]) == "--deny-new";
         require(argc == 1 || udp_only || deny_new, "invalid probe mode");

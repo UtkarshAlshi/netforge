@@ -1165,3 +1165,21 @@ prepared for real worker traffic, acknowledged checkpoint2, killed supervisor,
 wrong mode/count refusal, explicit pidfd orphan stop, recovered3, deny4, rejected5
 and clean restart6. It uses NET_ADMIN/NET_RAW only inside the hosted container
 with forwarding0; no host mounts/NIC/hugepages. Actual new execution pending.
+
+
+## Real durable worker crash/recovery — hosted 2026-11-06
+
+Run42223753933/commitf74d6bd6f9e7f7c482e9181f367986771488fbcd passed native
+Linux/macOS and hosted real DPDK/worker acceptance. The two-owner AF_PACKET
+engine served real UDP/TCP before supervisorSIGKILL; wrong mode/count recovery
+was refused without signalling, explicit pidfd stopped the owned orphan, recovery
+advanced checkpoint2 to3, old/new traffic checked deny4, rejected5 preserved
+checkpoint4, and clean restart advanced to6 with stable credentials. No flow
+state survival claimed. Private state/credentials excluded from CI artifacts.
+
+Subsequent AF_PACKET statistics code samples reset-on-read PACKET_STATISTICS
+at roughly1-second loop opportunities and on reports, accumulating packet/drop
+deltas with availability/read-error indicators. New hosted pressure gate stops
+the owned engine via pidfd, injects10000 frames on its private ingress, resumes,
+and requires increased kernel drops plus monotonic snapshots and two available
+ports. Actual new statistics/pressure execution pending.

@@ -91,4 +91,4 @@ Example entry point uses the same --binary/--config/--state/--resume/
 advances beyond consumed high-water revisions. It restores configuration only;
 all flow state is lost. No individual owner-thread replacement, replicated flow
 state or seamless failover is promised. Native clean checkpoint/restart tests
-passed; real worker supervisor-crash/pidfd/traffic acceptance is prepared in CI.
+passed; real worker supervisor-crash/pidfd/traffic acceptance passed hosted run42223753933.

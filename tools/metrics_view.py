@@ -39,7 +39,7 @@ def render(values):
         base = name.split('{', 1)[0]
         group = ('Backend health' if base.startswith('netforge_health_') else
                  'Kernel decisions' if base.startswith('netforge_xdp_') else
-                 'Socket I/O' if base.startswith(('netforge_port_', 'netforge_tx_', 'netforge_rx_')) else
+                 'Socket I/O' if base.startswith(('netforge_port_', 'netforge_tx_', 'netforge_rx_', 'netforge_packet_socket_')) else
                  'Process' if base.startswith('netforge_process_') else
                  'Worker state' if base.startswith('netforge_worker_') else 'Core state and decisions')
         rows.append('<tr><td>'+group+'</td><td><code>'+html.escape(name)+'</code></td><td>'+html.escape(value)+'</td></tr>')

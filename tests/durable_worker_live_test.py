@@ -4,6 +4,8 @@ import json
 import os
 from pathlib import Path
 import select
+import signal
+import time
 import subprocess
 import sys
 import tempfile
@@ -73,6 +75,23 @@ try:
     traffic('--deny-new')
     metrics=agent.snapshot()
     assert 'netforge_config_generation 6\n' in metrics and 'netforge_tx_failures_total 0\n' in metrics
+    def scalar(snapshot,name):
+        return int(next(line.split()[1] for line in snapshot.splitlines() if line.startswith(name+' ')))
+    before_drops=scalar(metrics,'netforge_packet_socket_drops_total')
+    descriptor=os.pidfd_open(agent.child.pid)
+    try:
+        signal.pidfd_send_signal(descriptor,signal.SIGSTOP)
+        try:traffic('--flood')
+        finally:signal.pidfd_send_signal(descriptor,signal.SIGCONT)
+    finally:os.close(descriptor)
+    time.sleep(.5)
+    pressured=agent.snapshot()
+    assert scalar(pressured,'netforge_packet_socket_drops_total')>before_drops
+    assert scalar(pressured,'netforge_packet_socket_statistics_read_errors_total')==0
+    assert scalar(pressured,'netforge_packet_socket_statistics_available_ports')==2
+    again=agent.snapshot()
+    assert scalar(again,'netforge_packet_socket_drops_total')>=scalar(pressured,'netforge_packet_socket_drops_total')
+    print('PASS: actual packet-socket pressure drops are distinct, cumulative across reset-on-read snapshots and available on both ports',flush=True)
     Path(report).write_text(json.dumps(dict(workers=2,crash_checkpoint=2,recovered=3,acknowledged=4,rejected_high_water=5,clean_restart=6,stable_credentials=True,flow_state_persisted=False,exact_child_replaced=True),indent=2)+'\n')
     print('PASS: real durable two-worker HTTP publication, supervisor SIGKILL, pidfd orphan stop, mode/count refusal, cold restart and traffic',flush=True)
 finally:

@@ -120,9 +120,23 @@ int run_linux(const std::string& path, unsigned worker_count) {
     std::vector<std::uint8_t> buffer(65549);
     std::vector<std::pair<std::string, PortCounters>> port_counts;
     for (const auto& id : ids) port_counts.push_back({id, {}});
+    std::uint64_t kernel_packets = 0, kernel_drops = 0, kernel_stat_errors = 0;
+    unsigned kernel_available_ports = 0;
+    bool kernel_ever_available = false;
+    auto sample_kernel_stats = [&] {
+        kernel_available_ports = 0;
+        for (const auto& descriptor : descriptors) {
+            tpacket_stats stats{}; socklen_t length = sizeof(stats);
+            // PACKET_STATISTICS resets kernel counters on read; accumulate deltas.
+            if (getsockopt(descriptor.fd, SOL_PACKET, PACKET_STATISTICS, &stats, &length) == 0 && length == sizeof(stats)) {
+                kernel_packets += stats.tp_packets; kernel_drops += stats.tp_drops;
+                ++kernel_available_ports; kernel_ever_available = true;
+            } else ++kernel_stat_errors;
+        }
+    };
     const auto started = milliseconds();
     std::vector<WorkerMaintenance> worker_state(worker_count);
-    std::uint64_t next_worker_tick = started;
+    std::uint64_t next_worker_tick = started, next_kernel_tick = started;
     auto transmit = [&](const Decision& decision) {
         if (decision.egress.empty()) return;
         auto output = std::find(ids.begin(), ids.end(), decision.egress);
@@ -133,6 +147,7 @@ int run_linux(const std::string& path, unsigned worker_count) {
         else { ++tx_sent; ++counts.tx_packets; counts.tx_bytes += decision.frame.size(); }
     };
     auto report = [&] {
+        sample_kernel_stats();
         if (appliance) std::cout << appliance->metrics();
         else {
             std::cout << "netforge_config_generation " << config.generation << '\n'
@@ -147,6 +162,11 @@ int run_linux(const std::string& path, unsigned worker_count) {
                           << "netforge_worker_flows_expired_total{owner=\"" << owner << "\"} " << worker_state[owner].expired << '\n';
             std::cout << "netforge_worker_ipv6_received_total " << worker_ipv6 << '\n';
         }
+        if (kernel_ever_available)
+            std::cout << "netforge_packet_socket_packets_total " << kernel_packets << '\n'
+                      << "netforge_packet_socket_drops_total " << kernel_drops << '\n';
+        std::cout << "netforge_packet_socket_statistics_read_errors_total " << kernel_stat_errors << '\n'
+                  << "netforge_packet_socket_statistics_available_ports " << kernel_available_ports << '\n';
         std::cout << port_metrics(port_counts)
                   << "netforge_tx_sent_total " << tx_sent << '\n'
                   << "netforge_tx_failures_total " << tx_failures << '\n'
@@ -167,6 +187,10 @@ int run_linux(const std::string& path, unsigned worker_count) {
     };
     std::cerr << "{\"event\":\"started\",\"generation\":" << (appliance ? appliance->config().generation : config.generation) << "}\n";
     while (!stopping) {
+        const auto sample_time = milliseconds();
+        if (sample_time >= next_kernel_tick) {
+            sample_kernel_stats(); next_kernel_tick = sample_time + 1000;
+        }
         if (reloading) {
             reloading = 0;
             try {
