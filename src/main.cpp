@@ -54,10 +54,10 @@ bool line_bounded(std::istream& input, std::string& line) {
 int main(int argc, char** argv) {
     try {
         if (argc == 2 && std::string(argv[1]) == "--version") {
-            std::cout << "NetForge 0.1.0-rc1\n"; return 0;
+            std::cout << "NetForge 0.1.0\n"; return 0;
         }
         if (argc < 3) {
-            std::cerr << "NetForge 0.1.0-rc1\nUsage: netforge check CONFIG\n"
+            std::cerr << "NetForge 0.1.0\nUsage: netforge check CONFIG\n"
                          "       netforge check-workers CONFIG 1|2\n"
                          "       netforge replay CONFIG INGRESS HEX_FILE\n"
                          "       netforge bench CONFIG INGRESS HEX_FILE ITERATIONS\n"

@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.1.0 portable release — 2026-11-06
+
+- Completes the agreed portable engineering release; hardware research deferred
+  by the project owner on2026-11-06. Historical RC notes below describe their
+  status at the time; current release status is in RELEASE.md/VERIFICATION.md.
+- C++20 reference and bounded two-owner UDP/TCP NAT/services, policy scheduling,
+  dynamic reference ARP, related ICMP, transactional reload and fault acceptance.
+- Authenticated control/audit/health, durable reference/worker configuration
+  recovery, exact-child pidfd handling and journaled partial fleet reconciliation.
+- Explicit TLS1.3 mutual certificate/node identity and static remote membership.
+- Restricted managed XDP lifecycle and policy interchange; real DPDK ring/PCAP,
+  bounded capture control and continuous AF_PACKET PMD virtual-port service.
+- Bounded process/socket/rule/backend/health metrics and saved snapshot viewer.
+- Serial verification, source-manifest archive/extractor, hosted Linux/macOS
+  checks and fresh-image capped DPDK/private-veth integration.
+- Retains48 byte-verified virtual-network trials, historical indexed lookup
+  gains/regressions and the negative capped-worker scaling result without NIC
+  throughput, seamless failover or research-novelty claims.
+
 ## 0.1.0-rc1
 
 Added a C++20 reference packet appliance, validated configuration grammar, IPv4

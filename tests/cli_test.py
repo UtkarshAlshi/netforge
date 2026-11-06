@@ -33,7 +33,7 @@ for policy in ("round-robin", "weighted-round-robin", "least-connections", "rend
 dynamic_file = cases / "dynamic.conf"
 dynamic_file.write_text(config.read_text() + "\nneighbor-discovery on\n")
 assert json.loads(run("check", dynamic_file).stdout)["valid"]
-assert "0.1.0-rc1" in run("--version").stdout
+assert "0.1.0" in run("--version").stdout
 assert "Usage:" in run(ok=False).stderr
 for i, content in enumerate([
     config.read_text() + "\nunknown hello\n",

@@ -34,7 +34,7 @@ This is explicit static membership and secure management transport, not Raft,
 automatic membership, packet-state replication or automatic failover. The secure
 node wrapper currently uses the reference process supervisor, with cold process
 startup and no durable remote-wrapper recovery. Durable loopback reference and
-worker agents remain separate tools. Tests exercise real TLS sockets and journal
-publication against a controlled engine double; separate existing tests verify
-actual dataplane publications. Independent-machine failure domains and deployed
+worker agents remain separate tools. Tests exercise real TLS sockets and journal publication against a controlled
+engine double on Linux/macOS, plus an actual reference dataplane on private
+hosted veths. The latter verifies TCP service traffic and backend counters. Independent-machine failure domains and deployed
 certificate operations still require a separately provisioned Linux environment.

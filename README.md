@@ -1,6 +1,6 @@
 # NetForge — programmable userspace IPv4 appliance
 
-**Engineering release candidate: reference/worker live traffic, authenticated control, XDP lifecycle and DPDK virtual/PCAP acceptance verified. Full original roadmap remains unfinished.**
+**NetForge0.1.0 portable engineering release. Hardware research is explicitly deferred.**
 
 NetForge is a dependency-light C++20 packet-processing appliance. It combines
 Ethernet/IPv4 parsing, static LPM routing, ordered ACLs, UDP/TCP connection tracking,
@@ -13,8 +13,9 @@ hex-frame replay tool and a Linux AF_PACKET adapter.
 This release is a correctness-first reference dataplane. It is not yet a validated
 high-performance, production-grade firewall. Restricted XDP and DPDK backends, bounded two-worker state ownership and active
 TCP health checks have verified acceptance gates. They have distinct capability
-boundaries; equivalent network performance and research publication remain open. The reference
-control plane adds a loopback management agent and sequential fleet rollout; it
+boundaries. A bounded reference/DPDK virtual-network comparison is verified; broader
+hardware/XDP/Linux-kernel experiments and research publication are deferred. The reference
+control plane adds loopback agents, explicit mTLS remote nodes and journaled fleet rollout; it
 does not implement distributed consensus. See [control/README.md](control/README.md).
 
 ## Quick start (no Docker, privileges or downloads)
@@ -52,6 +53,18 @@ cmake -S . -B build-cmake -DNETFORGE_SANITIZERS=ON
 cmake --build build-cmake --parallel 1
 ctest --test-dir build-cmake --output-on-failure
 ```
+
+The maintained full portable verification entry point is:
+
+```sh
+python3 tools/verify.py --sanitizers --output /absolute/new/netforge-verification
+```
+
+It requires CMake3.20+, C++20, Python3 and OpenSSL CLI, builds serially and retains
+its reports, verified source archive and offline demo in a new directory. It
+installs nothing and makes no NIC or Docker changes. Hosted CI also exercises
+real DPDK ring/PCAP and AF_PACKET PMDs and private-veth control/worker faults in a
+512-MiB/no-swap/.5-CPU container.
 
 ## Commands
 

@@ -1195,3 +1195,24 @@ claimed. A stopped owned engine plus10000 private-veth frames produces observed
 packet-socket drops; successive reset-on-read samples accumulate monotonically
 with both ports available and zero statistics-read errors. These are receive-queue
 drops, not physical NIC loss or policy-denial counts.
+
+### Live DPDK, secure nodes, backend diagnostics and network observations
+
+Run42227027416 at57936852fff57e57da4fe5ebf8393ce8cd4c883f passed all native
+Linux/macOS checks and capped live acceptance. It verifies18 deliberately
+reordered/duplicate same-flow UDP packets in each direction, NAT/checksum/payload
+continuity, real TLS1.3 mutual authentication plus bearer/node binding, actual
+reference publication and four TCP service handshakes with backend byte counters.
+Real AF_PACKET PMD service forwards64/128/512/1514-byte frames matching independent
+reference output. ACL/checksum negatives and TTL exceptions are absent at egress;
+SIGTERM reclaims255 mbufs and removes owned PMDs before EAL cleanup. The initial
+mbuf-headroom mismatch and strict certificate-fixture failure are fixed rather
+than bypassed.
+
+Run42227377915 at3f0171631c5539e7b7e597131314d42ddb1ac6b7 additionally passed
+48 counterbalanced reference/DPDK virtual-network trials at four sizes and three
+bursts. Every64-packet trial checks exact egress bytes and retains raw latency,
+counts, ordering, source/binary hashes and runtime logs in the hosted artifact.
+These observations include generator/capture/scheduling costs under .5CPU; they
+do not establish maximum throughput, hardware latency or statistical speedup.
+No equivalent Linux-kernel/XDP or physical NIC comparison is claimed.

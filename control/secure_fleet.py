@@ -42,6 +42,12 @@ def load_plan(path):
         if not 16 <= len(token) <= 128 or not all(c.isascii() and (c.isalnum() or c in '_-') for c in token):
             raise ValueError('invalid private token')
         private_read(path.parent / item['key'], 65536)
+        material = {}
+        for field in ('ca', 'certificate'):
+            with (path.parent / item[field]).open('rb') as source:
+                material[field] = source.read(65537)
+            if len(material[field]) > 65536:
+                raise ValueError('certificate exceeds bounds')
         context = ssl.create_default_context(cafile=str(path.parent / item['ca']))
         context.minimum_version = ssl.TLSVersion.TLSv1_3
         context.load_cert_chain(str(path.parent / item['certificate']), str(path.parent / item['key']))
@@ -51,10 +57,7 @@ def load_plan(path):
             raise ValueError('configuration exceeds bounds')
         transport = hashlib.sha256()
         for key in ('ca', 'certificate'):
-            with (path.parent / item[key]).open('rb') as source:
-                content = source.read(65537)
-            if len(content) > 65536:
-                raise ValueError('certificate exceeds bounds')
+            content = material[key]
             transport.update(len(content).to_bytes(4, 'big')); transport.update(content)
         transport.update(identity.encode())
         nodes.append({**item, 'host': url.hostname, 'port': url.port, 'tls_context': context,

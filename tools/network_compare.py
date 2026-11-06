@@ -9,7 +9,6 @@ from pathlib import Path
 import select
 import signal
 import socket
-import statistics
 import struct
 import subprocess
 import time

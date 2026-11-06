@@ -1,3 +1,7 @@
+> Release scope decision,2026-11-06: the owner chose to finish the portable
+> engineering release and defer hardware research. RELEASE.md defines0.1.0;
+> this document preserves the original longer research roadmap and future work.
+
 # Remaining NetForge roadmap — 2026-10-20
 
 The original end-to-end scope remains in force. Eight implementation/acceptance

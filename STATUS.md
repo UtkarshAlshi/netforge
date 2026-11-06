@@ -164,3 +164,9 @@ entry point, and a small raw-observation network comparison. Their latest hosted
 acceptance must pass before a release claim. Static remote membership is explicit
 and authenticated; there is no consensus, automatic membership or independent
 machine failure-domain claim. No changes to main or release tags have been made.
+
+Hosted run42227027416 passed the live PMD/headroom fix, real TLS publication,
+backend counters and worker reordering, and run42227377915 passed the48-trial
+virtual-network comparison. These passes supersede the pending gates above.
+The final strict certificate-size preflight and documentation synchronization
+are the only changes after those source revisions and require one frozen-head CI.

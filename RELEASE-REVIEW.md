@@ -1,7 +1,8 @@
 # Source review snapshot
 
-This is a reviewable0.1.0-rc1 engineering snapshot, not certification of the full
-original roadmap. STATUS.md, ROADMAP.md and VERIFICATION.md retain its boundaries.
+This is the0.1.0 portable engineering release. On2026-11-06 the owner explicitly
+chose to finish the portable release and defer hardware research. RELEASE.md
+defines the accepted scope; the original research roadmap remains historical.
 
 Build on a Linux host with C++20, CMake, Python3 and Threads:
 

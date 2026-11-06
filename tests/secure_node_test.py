@@ -117,6 +117,8 @@ with tempfile.TemporaryDirectory() as temp:
         manifest.append(dict(manifest[0]))
         (root / 'members.json').write_text(json.dumps(manifest))
         must_fail(lambda: load_plan(root / 'members.json'))
+        (root / 'oversize-ca.pem').write_bytes(b'x' * 65537)
+        must_fail(lambda: SecureServer(('127.0.0.1', 0), engine, 'node-b', root / 'server.pem', root / 'server.key', root / 'oversize-ca.pem'))
         (root / 'server.key').chmod(0o644)
         must_fail(lambda: SecureServer(('127.0.0.1', 0), engine, 'node-b', root / 'server.pem', root / 'server.key', root / 'ca.pem'))
     finally:

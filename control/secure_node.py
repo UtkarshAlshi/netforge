@@ -4,6 +4,7 @@ import argparse
 import http.server
 import json
 import re
+import pathlib
 import signal
 import ssl
 from agent import Agent, Handler
@@ -37,6 +38,10 @@ class SecureServer(http.server.HTTPServer):
     def __init__(self, address, agent, name, certificate, key, ca):
         # Reject public/group-readable keys before binding or starting children.
         private_read(key, 65536)
+        for path in (certificate, ca):
+            with pathlib.Path(path).open('rb') as source:
+                if len(source.read(65537)) > 65536:
+                    raise ValueError('certificate material exceeds64KiB')
         self.context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         self.context.minimum_version = ssl.TLSVersion.TLSv1_3
         self.context.verify_mode = ssl.CERT_REQUIRED
