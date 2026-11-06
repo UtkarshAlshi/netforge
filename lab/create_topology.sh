@@ -29,3 +29,4 @@ for ns in nf-host-a nf-router nf-host-b; do ip -n "$ns" link set lo up; done
 for link in nf-ha nf-ra nf-rb nf-hb; do ip -n "$(case "$link" in nf-ha) echo nf-host-a;; nf-hb) echo nf-host-b;; *) echo nf-router;; esac)" link set "$link" up; done
 echo 'Lab ready. Capture: sudo ip netns exec nf-router tcpdump -ni nf-ra -e -vv arp or icmp'
 echo 'Probe:   sudo ip netns exec nf-host-a ping -c 1 10.0.2.2'
+

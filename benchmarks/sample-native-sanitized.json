@@ -1,0 +1,49 @@
+{
+  "kind": "offline_core_microbenchmark",
+  "utc": "2026-10-18T12:17:48.239104+00:00",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "machine": "arm64",
+  "binary_sha256": "eef8f2f5a527a3f702517159fef7f9bf82dcb74b1146c64c626dbbb9779d749d",
+  "config_sha256": "4f1326d5bc72742d79bb40058f432e81d2851c8a6b4ca36f3c7251dd869afbdf",
+  "frames_sha256": "8d0b08ead71a33ce783274e16d16441888ec88428c7aee617a21b9dd34d4f20a",
+  "samples": [
+    {
+      "kind": "offline_microbenchmark",
+      "iterations": 1000,
+      "warmup": 1000,
+      "elapsed_ns": 1823292,
+      "emitted": 1000,
+      "dropped": 0
+    },
+    {
+      "kind": "offline_microbenchmark",
+      "iterations": 1000,
+      "warmup": 1000,
+      "elapsed_ns": 2000875,
+      "emitted": 1000,
+      "dropped": 0
+    },
+    {
+      "kind": "offline_microbenchmark",
+      "iterations": 1000,
+      "warmup": 1000,
+      "elapsed_ns": 1814709,
+      "emitted": 1000,
+      "dropped": 0
+    }
+  ],
+  "packets_per_second": {
+    "median": 548458.5025327813,
+    "min": 499781.34566127317,
+    "max": 551052.537900016,
+    "sample_stdev": 28881.740985618108
+  },
+  "limitations": [
+    "first frame only; repeated established-flow workload",
+    "single process per trial",
+    "includes allocation and core processing; excludes packet I/O",
+    "no network latency or line-rate claim",
+    "frequency/background load not controlled by this harness",
+    "record compiler/build flags separately"
+  ]
+}

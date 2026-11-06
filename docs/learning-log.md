@@ -16,3 +16,4 @@ _No concept is marked demonstrated until it is explained from an observed experi
 - Why does a remote-subnet packet use the router's MAC address rather than the destination host's MAC address?
 - Which exact packets are emitted before the first ICMP echo crosses the namespace router?
 - What future buffer owner will be responsible for returning a received packet to a pool?
+

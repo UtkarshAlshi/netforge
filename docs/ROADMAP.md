@@ -14,3 +14,4 @@
 | M13 Capstone | focused systems study and release | report, limitations, release checklist |
 
 Each gate requires a design note, tests, observable packet-level evidence where applicable, and a learning-log update.
+

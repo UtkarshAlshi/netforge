@@ -16,3 +16,4 @@ Host-a routes `10.0.2.2` through its default gateway `10.0.1.1`. It therefore AR
 - Ethernet source/destination MAC addresses on ingress and egress
 - IPv4 TTL values before and after routing
 - Why MAC addresses change but the IPv4 destination does not
+

@@ -17,3 +17,4 @@ sudo ip netns exec nf-host-a ip neigh show
 ```
 
 Before reading code, explain from the capture why host-a resolves its default gateway rather than host-b.
+

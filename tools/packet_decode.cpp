@@ -16,3 +16,4 @@ int main(int argc, char** argv) {
   std::cout << "ethernet " << netforge::format_mac(result.packet.source_mac) << " -> " << netforge::format_mac(result.packet.destination_mac) << '\n';
   std::cout << "ipv4 " << netforge::format_ipv4(result.packet.ipv4.source) << " -> " << netforge::format_ipv4(result.packet.ipv4.destination) << " ttl=" << static_cast<unsigned>(result.packet.ipv4.ttl) << " protocol=" << static_cast<unsigned>(result.packet.ipv4.protocol) << '\n';
 }
+

@@ -1,0 +1,63 @@
+# Remaining implementation and acceptance ledger — 2026-11-06
+
+This is the current open-work ledger. ROADMAP.md retains original workstream
+scope, including already-completed bullets. A full-original-roadmap completion
+claim requires resolving these items or an explicitly agreed scope change.
+
+## Completed gates: do not repeat without a relevant change
+
+- Reference/worker state, NAT/services, selection policies and dynamic reference
+  neighbors; TSan and live worker reload/API acceptance.
+- XDP real verifier/live bytes, owner-aware lifecycle, kernel counters, HTTP/audit
+  and portable policy interchange/native conversion.
+- DPDK real EAL/ring PMD, partial-TX ownership, bounded PCAP/shutdown/parity.
+- Durable reference checkpoints/exact-child recovery; local fleet partial rollout,
+  lost-response reconciliation and endpoint outage/rejoin via corrective plan.
+- Reference persistent TCP, half-close, bounded exhaustion/malformed ICMP tests.
+- First16 reference ACL diagnostics, bounded audit and offline snapshot view.
+- Manifest-verified archive and fresh-directory Linux build18/18 tests.
+- Historical indexed lookup experiment; capped worker comparison with no speedup.
+- Health flapping/all-backend outage/recovery with real acknowledged publications
+  and per-endpoint health metrics; deterministic owned-lab UDP loss/recovery.
+- Verified Linux single-entry offline demo and newly labeled internal lab
+  provisioning/live UDP acceptance from the prepared local image.
+
+## Remaining functional work
+
+1. Broader DPDK service/control integration beyond the bounded capture adapter.
+   Preserve explicit feature rejection and mbuf ownership; do not rename capture
+   replay a continuous stateful service.
+2. Worker failure/recovery contract beyond orderly owner shutdown and local
+   exceptions; dynamic discovery/global least-connections remain unsupported.
+3. Broader fault matrix: controlled reordering and additional TCP/ICMP failure
+   boundaries/recovery; deterministic complete-loss UDP interval has now passed.
+4. Per-backend traffic observability and pre-receive socket-drop provenance.
+   Per-endpoint health observation metrics now passed live acceptance. Reference
+   per-rule exports are capped16; worker/XDP per-rule exports are not implemented.
+5. General deployment/control scope: secure remote channel/node membership and
+   independent failure domains remain unimplemented; management is loopback-only.
+   Durable worker/XDP restart and stateful XDP exception fallback are not provided.
+
+## Remaining experiment and release work
+
+6. Equivalent supported-policy network load/loss/latency comparisons with retained
+   raw observations and profiling. Capped offline invocation rates do not close it.
+7. Fresh-image/machine bootstrap and consolidation of historical acceptance scripts
+   into a maintained entry point. Existing-image provisioning and live traffic,
+   plus the offline operator demo, have now passed.
+
+8. Hosted CI execution, final capability/docs/version synchronization and release
+   packaging after functional changes. Existing workflow has not been run here.
+   A hosted run needs a user-selected repository; no repository publication assumed.
+
+Physical NIC/NUMA/scaling studies need other isolated Linux hardware. A paper or
+novelty claim is conditional; code cannot certify interview understanding.
+
+## Execution constraints
+
+Keep manual Docker output gates,2-CPU/~2-GiB VM,512-MiB builder,128-MiB lab caps,
+serial builds,10-GiB Mac disk guard. Latest observed headroom10.20 GiB; the10-GiB guard passes narrowly.
+Approved deletion of11 obsolete builder directories completed; no further deletion
+is authorized. Avoid build/install/container expansion at this narrow margin. No-build focused
+checks may resume after their own guard check; source-only work can continue. Reuse
+verified artifacts where source equality permits. Ask before deletion.

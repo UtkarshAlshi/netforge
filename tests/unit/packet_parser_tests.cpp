@@ -37,3 +37,4 @@ int main() {
   require(netforge::parse_ethernet_ipv4(oversized_total).error == ParseError::invalid_ipv4_total_length, "incomplete declared packet rejected");
   std::cout << "packet parser tests passed\n";
 }
+
