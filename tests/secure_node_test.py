@@ -48,12 +48,13 @@ with tempfile.TemporaryDirectory() as temp:
     def openssl(*args):
         subprocess.run(['openssl', *args], cwd=root, check=True, stdout=subprocess.DEVNULL,
                        stderr=subprocess.DEVNULL, timeout=15)
+    (root / 'ca.cnf').write_text('[req]\ndistinguished_name=dn\n[dn]\n[v3_ca]\nbasicConstraints=critical,CA:TRUE\nkeyUsage=critical,keyCertSign,cRLSign\nsubjectKeyIdentifier=hash\nauthorityKeyIdentifier=keyid:always\n')
     openssl('req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-days', '1', '-subj', '/CN=NetForge-test-CA',
-            '-keyout', 'ca.key', '-out', 'ca.pem')
+            '-keyout', 'ca.key', '-out', 'ca.pem', '-config', 'ca.cnf', '-extensions', 'v3_ca')
     for role in ('server', 'client'):
         openssl('req', '-newkey', 'rsa:2048', '-nodes', '-subj', '/CN=' + role,
                 '-keyout', role + '.key', '-out', role + '.csr')
-        (root / 'extensions').write_text('subjectAltName=IP:127.0.0.1\nextendedKeyUsage=' +
+        (root / 'extensions').write_text('basicConstraints=critical,CA:FALSE\nkeyUsage=critical,digitalSignature,keyEncipherment\nsubjectKeyIdentifier=hash\nauthorityKeyIdentifier=keyid,issuer\nsubjectAltName=IP:127.0.0.1\nextendedKeyUsage=' +
                                          ('serverAuth' if role == 'server' else 'clientAuth') + '\n')
         openssl('x509', '-req', '-in', role + '.csr', '-CA', 'ca.pem', '-CAkey', 'ca.key',
                 '-CAcreateserial', '-days', '1', '-extfile', 'extensions', '-out', role + '.pem')
