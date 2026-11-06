@@ -1,16 +1,33 @@
 # Contributing
 
-Use short-lived feature branches and small reviewable commits. Each behavioral
-change needs a packet-level expected result, support-matrix update where relevant,
-and tests for failure/resource boundaries. Keep ownership and configuration
-semantics explicit. Build serially, run the sanitizer suites, and avoid test fixtures
-that only repeat implementation logic. Capture-derived fixtures need provenance,
-privacy review and a declared capture location/offload state.
+Start with the [architecture](docs/architecture.md) and [capability matrix](docs/capabilities.md).
+Use a focused branch and explain the observable before/after behavior.
 
-CI is configured for Linux and macOS CMake/CTest builds. It has not run until this
-repository is published and the workflow completes. No remote repository, PR,
-release or commit is created automatically by these source files.
+```sh
+python3 tools/verify.py --sanitizers --output ../netforge-check-change
+```
 
-Do not use broad Docker pruning or privileged host-network containers. Preserve
-manual Docker execution and deletion approvals in this workspace. Never commit
-credentials, private traffic captures or generated build binaries.
+Keep the build serial on small machines. Tests should check independent packet
+bytes or meaningful state/failure boundaries rather than duplicate the algorithm.
+Runtime changes need the relevant isolated Linux acceptance in addition to portable
+checks. Do not replace a failed backend gate with a native model-only result.
+
+Update configuration/backend contracts when semantics change. Record benchmark
+source, environment, raw observations and limitations; do not claim NIC performance
+from offline invocation rates. Use synthetic fixtures or review capture provenance.
+
+After adding/moving source files, refresh `SOURCE-MANIFEST.sha256` with:
+
+```sh
+python3 tools/update_manifest.py
+python3 tools/check_docs.py
+```
+
+The manifest intentionally includes authored source/docs and small sanitized
+results, not generated builds, secrets or private deployment files. CI runs native
+Linux/macOS checks and real DPDK/private-veth acceptance in a capped disposable
+Linux container. A green badge corresponds to that workflow, not hardware research.
+
+Preserve historical records under `docs/archive/`; do not present their pending
+milestone text as current setup guidance. Never prune unrelated Docker resources,
+commit credentials/binaries, change host networking or attach a production NIC.

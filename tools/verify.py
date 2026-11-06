@@ -20,6 +20,7 @@ def main():
     out.mkdir(mode=0o700)  # Exclusive; never overwrite or delete earlier work.
     started = time.monotonic()
     commands = [
+        [os.sys.executable, str(root / 'tools/update_manifest.py'), '--check'],
         ['cmake', '-S', str(root), '-B', str(out / 'build'), '-DCMAKE_BUILD_TYPE=Debug',
          '-DNETFORGE_SANITIZERS=' + ('ON' if args.sanitizers else 'OFF')],
         ['cmake', '--build', str(out / 'build'), '--parallel', '1'],

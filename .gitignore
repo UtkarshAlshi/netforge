@@ -1,4 +1,6 @@
-/build/
-/results/
+/build*/
+/demo-output*/
 __pycache__/
+*.pyc
 *.o
+# Keep committed, sanitized results/ evidence. Generated builds stay outside source.

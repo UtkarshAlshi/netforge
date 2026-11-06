@@ -142,7 +142,7 @@ sampling. These count kernel socket observations, which can include outgoing
 frames discarded by the userspace adapter, and differ from accepted-size RX/core
 decisions. They are not NIC-wide drops, policy denies or end-to-end delivery loss.
 See https://man7.org/linux/man-pages/man7/packet.7.html for reset semantics.
-Hosted forced-pressure acceptance is prepared, not yet passed.
+Hosted forced-pressure acceptance passed; the current results guide records its provenance.
 
 Reference per-backend diagnostics cover the first four service/backend pairs in
 configuration order: new admitted flows, forward emitted bytes and reverse

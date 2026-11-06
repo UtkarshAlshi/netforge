@@ -1,100 +1,23 @@
 # Changelog
 
-## 0.1.0 portable release — 2026-11-06
+## 0.1.0 — 2026-11-06
 
-- Completes the agreed portable engineering release; hardware research deferred
-  by the project owner on2026-11-06. Historical RC notes below describe their
-  status at the time; current release status is in RELEASE.md/VERIFICATION.md.
-- C++20 reference and bounded two-owner UDP/TCP NAT/services, policy scheduling,
-  dynamic reference ARP, related ICMP, transactional reload and fault acceptance.
-- Authenticated control/audit/health, durable reference/worker configuration
-  recovery, exact-child pidfd handling and journaled partial fleet reconciliation.
-- Explicit TLS1.3 mutual certificate/node identity and static remote membership.
-- Restricted managed XDP lifecycle and policy interchange; real DPDK ring/PCAP,
-  bounded capture control and continuous AF_PACKET PMD virtual-port service.
-- Bounded process/socket/rule/backend/health metrics and saved snapshot viewer.
-- Serial verification, source-manifest archive/extractor, hosted Linux/macOS
-  checks and fresh-image capped DPDK/private-veth integration.
-- Retains48 byte-verified virtual-network trials, historical indexed lookup
-  gains/regressions and the negative capped-worker scaling result without NIC
-  throughput, seamless failover or research-novelty claims.
+Portable C++20 IPv4 dataplane with stateful UDP/TCP NAT and virtual services;
+bounded workers, transactional reload, authenticated control/health/audit,
+durable configuration recovery and journaled fleet reconciliation. Adds explicit
+mTLS static nodes, restricted managed XDP, real DPDK ring/PCAP and AF_PACKET PMD
+paths, bounded metrics, verified demos and source packaging.
 
-## 0.1.0-rc1
+Hosted Linux/macOS and capped fresh-container integration passed. The retained
+network experiment checks48 trials and3,072 packets with no missing observations.
+Hardware research is deferred; see [capabilities](docs/capabilities.md) and
+[results](docs/results.md).
 
-Added a C++20 reference packet appliance, validated configuration grammar, IPv4
-LPM/ACL, bounded UDP state/SNAT/services, ARP/ICMP handling, offline CLI, metrics,
-benchmark tooling, Linux AF_PACKET adapter source and test/build/CI documentation.
-Native sanitizer verification is available; live Linux acceptance remains pending.
+## Documentation and demo presentation refresh
 
-## Unreleased extension — 2026-10-18
+Adds one-command demo launcher, browser packet walkthrough, current guides,
+committed sanitized raw results and documentation checks. Moves development
+chronology into the archive so it cannot be mistaken for current instructions.
+The packet-engine behavior is unchanged by this presentation refresh.
 
-- Added opt-in TCP handshake tracking, NAT/PAT and service round robin; Linux
-  sanitizer and live real-socket smoke checks passed for this TCP batch.
-- Added return-path related ICMP NAT error translation, including quoted checksums.
-- Added explicit backend draining with old-flow affinity and fail-closed new flows.
-- Added authenticated loopback supervisor, acknowledged config publication and
-  bounded sequential fleet delivery. These newer features await Linux integration.
-- Added TCP helper to both builds and a sixth control-plane regression suite.
-
-## Unreleased service-policy extension — 2026-10-18
-
-- Added weighted round robin (bounded integer weights), least tracked connections
-  and deterministic rendezvous consistent hashing for UDP/TCP services.
-- Added deterministic weight-cycle, load/tie, reorder/removal stability and drain
-  tests plus integrated weighted NAT/checksum regression coverage.
-- Extended health proposals to preserve scheduler tokens, weights and per-service
-  manual-drain ownership. Eight native suites pass; Linux policy run pending.
-- Reconciled original roadmap into explicit implementation/integration/measurement
-  and release gates. Recorded live control, drain, health and ICMP evidence.
-
-## Unreleased dynamic-neighbor extension — 2026-10-20
-
-- Added opt-in solicited ARP cache and bounded per-target/global pending queues.
-- Added bounded idle maintenance, retry/negative-cache expiry, ARP request rate
-  budget and policy revalidation before queued packet emission.
-- Integrated timer outputs into AF_PACKET; static neighbor behavior stays default.
-- Separated deferred/consumed decisions and exposed queue/reprocessing metrics.
-- Eight native suites pass; updated Linux/live neighbor acceptance pending.
-
-## Unreleased acknowledged health reconciliation — 2026-10-20
-
-- Added authenticated acknowledged-config reads and a finite health controller.
-- Health decisions publish only when changed; accepted state is tied to the active
-  revision/hash, with stale/manual-drift detection and failed/uncertain round isolation.
-- Added bounded round counts, jittered cadence, explicit target scope and a ninth
-  regression suite. Live integration remains pending.
-- Recorded successful live dynamic ARP UDP/TCP forwarding and cache reuse.
-
-## Unreleased observability extension — 2026-10-20
-
-- Added engine bytes, ACL/route work, flow expiry/high-water and queue peak metrics.
-- Added per-port socket RX/TX bytes/packets/failures and process resource snapshots.
-- Expire flows during idle maintenance; tests guard accounting and double expiry.
-- Bound port identifiers and escape metric labels without per-flow cardinality.
-- Preserve complete-snapshot terminal marker; Linux/live validation pending.
-
-## Unreleased mixed-flow baseline tooling — 2026-10-20
-
-- Added bounded bench-mix warm/cold processing with measured mapping counts and bytes.
-- Added repeated multi-size/multi-flow UDP trials, raw data, artifact hashes,
-  descriptive summaries and per-trial/global runtime budgets.
-- Added CLI mode/state/bounds regressions and verified 24 sanitizer harness trials.
-- Recorded successful live observability accounting and clarified inherited peak RSS.
-- Nine native suites pass; Linux validation/optimized baseline remain pending.
-
-## Unreleased optional flow indexing — 2026-10-20
-
-- Added complete-tuple/interface/protocol forward/reverse indexes and NAT occupancy.
-- Added deadline-gated expiry and safe index rebuild after partial reclamation.
-- Kept linear mode as default/reference; added dual core regression/replay checks.
-- Added counterbalanced same-binary A/B harness and combined bounded Linux/live batch.
-- Preserved original limits, policy snapshots, port reuse and TCP timeout transitions.
-
-## Unreleased XDP kernel-check batch — 2026-10-20
-
-- Added separate eBPF stateless IPv4 routing/ACL subset and portable native model.
-- Added reference byte parity, malformed/bounds/ACL/LPM tests and libbpf kernel checker.
-- Added size-guarded compiler install and a no-network capped checker container
-  with BPF/NET_ADMIN and a default-deny seccomp profile, preserving existing caps.
-- No bpftool dependency, interface attachment, unconfined mode or automatic deletion.
-- Eleven native summaries pass; kernel compilation/verifier/test-run pending.
+[Historical implementation chronology](docs/archive/development/changelog.md).

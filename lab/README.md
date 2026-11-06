@@ -1,4 +1,10 @@
-# M0 namespace lab
+# Historical M0 namespace lab
+
+These are early Linux learning scripts, not the current portable demo or a
+macOS setup path. Start with the [current demo](../docs/demo.md) and
+[isolated live-lab guide](../docs/live-lab.md). Do not run these sudo namespace
+commands on a workstation merely to try NetForge.
+
 
 The topology is intentionally small:
 

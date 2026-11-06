@@ -1,0 +1,24 @@
+{
+  "source_commit": "0fd44533f37e619933ff1d484ad64ec74ba49b62",
+  "workflow_run": "https://github.com/UtkarshAlshi/netforge/actions/runs/42228227572",
+  "artifact_sha256": "838d2cb85239e07dfec0331196e204357daba79bff61e1236090c34057b64e41",
+  "raw_report_sha256": "1fd5facee2acf4bcc4473986f474efc3afc925c2baa09bdef42337c0de0b6197",
+  "environment": {
+    "hosted_os": "Ubuntu24.04",
+    "container": "Ubuntu24.04; Linux x86_64",
+    "DPDK": "23.11.7",
+    "cpu_quota": 0.5,
+    "memory_bytes": 536870912,
+    "swap_bytes": 0,
+    "pids_limit": 128,
+    "network": "private container veth pairs"
+  },
+  "not_claimed": [
+    "physical NIC throughput",
+    "maximum throughput",
+    "hardware latency",
+    "statistical speedup",
+    "independent generator host",
+    "XDP/Linux-kernel rate comparison"
+  ]
+}

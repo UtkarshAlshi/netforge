@@ -159,8 +159,7 @@ the cached Python supervisor; the XDP-specific profile is not expanded. The real
 HTTP test requires authentication, generation2 publication, old UDP continuity,
 new-flow denial, incompatible-limit rejection/file restoration, unsupported
 config and stale-publication rejection, TX120/failures0 metrics and owned shutdown.
-No installs, old lab changes, deletions or host networking changes. The default
-CMake suite now contains16 tests. Linux/live worker API acceptance is pending.
+No installs, old lab changes, deletions or host networking changes. The current CMake suite includes subsequent coverage. Linux/live worker API acceptance passed; see the current results guide.
 
 Native ASan/UBSan engine build and worker-adapter checks passed, including the
 real worker checker,1/2 counts, ACK, metrics, rejection/restoration and unsupported
