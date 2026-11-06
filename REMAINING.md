@@ -46,9 +46,10 @@ claim requires resolving these items or an explicitly agreed scope change.
    into a maintained entry point. Existing-image provisioning and live traffic,
    plus the offline operator demo, have now passed.
 
-8. Hosted CI execution, final capability/docs/version synchronization and release
-   packaging after functional changes. Existing workflow has not been run here.
-   A hosted run needs a user-selected repository; no repository publication assumed.
+8. Final CI after remaining functional changes, capability/docs/version
+   synchronization and reviewed release packaging. Hosted CI itself is now
+   verified: run42178801073 passed on the latest DPDK binding commit
+   e6a9ae9a7d019b117caf7f6febb45477cce0a8b0. DraftPR1 remains unmerged.
 
 Physical NIC/NUMA/scaling studies need other isolated Linux hardware. A paper or
 novelty claim is conditional; code cannot certify interview understanding.
@@ -56,7 +57,8 @@ novelty claim is conditional; code cannot certify interview understanding.
 ## Execution constraints
 
 Keep manual Docker output gates,2-CPU/~2-GiB VM,512-MiB builder,128-MiB lab caps,
-serial builds,10-GiB Mac disk guard. Latest observed headroom10.20 GiB; the10-GiB guard passes narrowly.
+serial builds,10-GiB Mac disk guard. Latest local DPDK attempt observed8.89 GiB and stopped before execution.
+The10-GiB guard currently blocks local build expansion.
 Approved deletion of11 obsolete builder directories completed; no further deletion
 is authorized. Avoid build/install/container expansion at this narrow margin. No-build focused
 checks may resume after their own guard check; source-only work can continue. Reuse

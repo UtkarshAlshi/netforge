@@ -1117,3 +1117,19 @@ pre-EAL blob/config mismatch refusal. Expanded DPDK batch execution pending;
 existing SDK/latest source-matched core reused, no dependency install/container.
 CMake adds dpdk_policy_binding (20 tests total); hosted execution not yet run
 for these new changes.
+
+
+Latest hosted CI run42178801073 completed successfully for DPDK binding commit
+e6a9ae9a7d019b117caf7f6febb45477cce0a8b0. Local actual-DPDK batch stopped at
+8.89 GiB free before compiling/running; actual multi-rule/multi-route DPDK
+acceptance remains unverified. Native-policy tests in hosted CI do not close
+that runtime gate. DraftPR1 remains the integration review, not a merged release.
+
+
+Prepared hosted dpdk-runtime job to remove the local disk blocker from actual
+DPDK verification. It creates a fresh Ubuntu24.04 container on a GitHub runner,
+not the Mac, capped512 MiB/no swap,.5CPU/128PIDs. Source is manifest-packaged;
+restricted DPDK runtime/SDK, serial Release build,20 CTest, actual corpus/PCAP
+and multiple-policy acceptance are executed there. Dependencies/evidence remain
+on the ephemeral runner with3-day artifact retention. Shell syntax checked;
+hosted runtime execution pending. No local Docker command has been run.

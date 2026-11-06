@@ -37,3 +37,33 @@ jobs:
             ${{ runner.temp }}/netforge-demo
           retention-days: 3
           if-no-files-found: error
+  dpdk-runtime:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare manifest-verified source archive
+        run: python3 tools/package_source.py "$RUNNER_TEMP/netforge-dpdk-source.tar.gz"
+      - name: Run actual DPDK in capped ephemeral container
+        shell: bash
+        run: |
+          docker create --name netforge-hosted-dpdk --memory 512m --memory-swap 512m --cpus 0.5 --pids-limit 128 --env NETFORGE_HOSTED_DPDK=1 ubuntu:24.04 sh /tmp/hosted_dpdk.sh
+          docker cp "$RUNNER_TEMP/netforge-dpdk-source.tar.gz" netforge-hosted-dpdk:/tmp/netforge-source.tar.gz
+          docker cp tools/hosted_dpdk.sh netforge-hosted-dpdk:/tmp/hosted_dpdk.sh
+          docker start -a netforge-hosted-dpdk
+          test "$(docker inspect --format '{{.State.ExitCode}}' netforge-hosted-dpdk)" = 0
+      - name: Collect bounded DPDK evidence
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/dpdk-evidence"
+          docker logs netforge-hosted-dpdk > "$RUNNER_TEMP/dpdk-evidence/runtime.log" 2>&1
+          docker inspect --format '{{json .State}}' netforge-hosted-dpdk > "$RUNNER_TEMP/dpdk-evidence/state.json"
+          docker cp netforge-hosted-dpdk:/tmp/netforge-results/. "$RUNNER_TEMP/dpdk-evidence/"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dpdk-runtime-evidence
+          path: ${{ runner.temp }}/dpdk-evidence
+          retention-days: 3
+          if-no-files-found: error
