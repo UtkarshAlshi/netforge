@@ -20,8 +20,12 @@ jobs:
       - name: Serial verification entry point
         run: python3 tools/verify.py --sanitizers --output "$RUNNER_TEMP/netforge-verification"
       - name: One-command demo from source
+        env:
+          CXX: c++ -pthread
         run: python3 tools/demo.py --output "$RUNNER_TEMP/netforge-presentation"
       - name: Demo without CMake
+        env:
+          CXX: c++ -pthread
         run: python3 tools/demo.py --build-system direct --output "$RUNNER_TEMP/netforge-direct-demo"
       - name: Retain bounded verification artifacts
         if: always()

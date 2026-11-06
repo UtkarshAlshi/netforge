@@ -32,3 +32,6 @@ build on Linux/macOS. No global tools, npm settings or OS configuration are chan
 Automatic CI now uses Linux portable checks; macOS and live-backend acceptance
 remain available through explicit Run workflow. Adds same-ref concurrency to
 cancel obsolete runs. No historical failures or test capability are erased.
+
+Compiler arguments in CXX are preserved for direct builds; CMake retains its own
+compiler discovery. CI exercises both demo paths with CXX arguments.
