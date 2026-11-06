@@ -21,7 +21,9 @@ python3 --version
 openssl version
 ```
 
-Use CMake3.20+, C++20 (Clang or GCC), Python3.10+ and Make/Ninja. OpenSSL CLI is
+For the demo, use C++20 (Clang or GCC) and Python3.9+. If CMake is missing,
+the launcher compiles the reference executable directly and serially. The full
+verification suite requires CMake3.20+, Python3.10+ and Make/Ninja. OpenSSL CLI is
 used by the full TLS verification tests. Install missing prerequisites through
 your normal development environment. For example, Ubuntu24.04 users can install
 `build-essential cmake python3 openssl`; macOS users need Xcode Command Line Tools
@@ -36,7 +38,14 @@ cd netforge
 python3 tools/demo.py --output ../netforge-demo
 ```
 
-The build is serial and targets only `netforge`. Expect `PASS: five offline demo
+The build is serial and targets only `netforge`; CMake is used if available,
+otherwise your existing `c++` compiler is used. To explicitly select the latter:
+
+```sh
+python3 tools/demo.py --build-system direct --output ../netforge-demo-direct
+```
+
+ Expect `PASS: five offline demo
 cases` followed by an HTML path. Open `../netforge-demo/packets/index.html` in a
 browser. Files remain local; no packets are sent and no interface is changed.
 
@@ -68,7 +77,8 @@ on your computer. Live-container limits are documented in the separate lab guide
 
 | Symptom | Meaning and next step |
 |---|---|
-| `cmake: command not found` or compiler missing | Install the missing development prerequisite; retry the checks above |
+| CMake missing | Demo automatically uses the direct compiler build; full verification still needs CMake |
+| Compiler missing | Install your platform development tools; preflight creates no output directory |
 | Output directory already exists | Choose a new sibling path, e.g. `../netforge-demo-2`; no automatic deletion occurs |
 | `Output must be outside source` | Use a sibling path beginning `../`, not a directory inside the checkout |
 | `run` unsupported on macOS | Use `check`/`replay`/the offline demo; live packet I/O requires Linux |
@@ -77,3 +87,19 @@ on your computer. Live-container limits are documented in the separate lab guide
 
 To remove a demo later, inspect and delete only the output directory you chose.
 NetForge never prunes containers, volumes, images or unrelated files.
+
+## Recovering from an older launcher failure
+
+If an older launcher created `../netforge-demo` before failing on missing CMake,
+leave that directory intact and use a new output path after updating the checkout:
+
+```sh
+git pull --ff-only
+python3 tools/demo.py --output ../netforge-demo-2 && open ../netforge-demo-2/packets/index.html
+```
+
+`open` is macOS-specific. On Linux, open the printed HTML path in your browser.
+Using `&&` avoids attempting to open a page if the build/demo fails. The `.npmrc`/
+nvm shell warning is unrelated; NetForge has no Node/npm dependency. Keep the
+small-machine disk reserve used by your lab; if space is low, inspect the
+already-generated CI demo artifact instead of building locally.

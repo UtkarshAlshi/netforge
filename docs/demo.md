@@ -9,7 +9,9 @@ access, virtual interfaces or background service.
 python3 tools/demo.py --output ../netforge-demo
 ```
 
-Open `../netforge-demo/packets/index.html` in a browser. The page is self-contained
+Open `../netforge-demo/packets/index.html` in a browser. CMake is optional for this launcher. If it is absent, the existing C++20 compiler
+is used directly, one source file at a time. Python3.9+ is sufficient for the demo.
+The page is self-contained
 and uses no remote scripts, fonts or telemetry. For a repeated run, use a new
 output directory. If you already built the binary, skip rebuilding:
 
