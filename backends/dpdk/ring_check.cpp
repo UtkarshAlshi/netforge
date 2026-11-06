@@ -1,6 +1,7 @@
 // Real DPDK EAL/ethdev/ring-PMD acceptance, using only process-local packets.
 #include "../xdp/fixture.h"
 #include "netforge/appliance.hpp"
+#include "policy_binding.hpp"
 #include <rte_eal.h>
 #include <rte_ethdev.h>
 #include <rte_eth_ring.h>
@@ -159,7 +160,10 @@ int main(int argc, char** argv) {
         input.read(reinterpret_cast<char*>(&policy), sizeof(policy));
         require(input.gcount() == static_cast<std::streamsize>(sizeof(policy)) &&
                 input.peek() == std::char_traits<char>::eof() && !input.bad(), "compiled policy ABI size/read");
-        require(policy.rule_count == 1 && policy.route_count == 1 && policy.rules[0].ingress == 1 &&
+        netforge::dpdk::validate_binding(config, policy);
+        // The synthetic corpus has a fixed fixture; external capture mode accepts
+        // all supported compiler rules/routes rather than imposing that fixture.
+        if (!capture) require(policy.rule_count == 1 && policy.route_count == 1 && policy.rules[0].ingress == 1 &&
                 policy.routes[0].ifindex == 2 && !policy.default_allow, "compiled acceptance policy bindings");
         cpu_set_t cpus; CPU_ZERO(&cpus);
         require(sched_getaffinity(0, sizeof(cpus), &cpus) == 0, "read allowed CPU affinity");

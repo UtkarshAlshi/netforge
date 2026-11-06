@@ -73,3 +73,7 @@ target_link_libraries(packet_decode PRIVATE netforge_packet)
 add_executable(packet_parser_tests tests/unit/packet_parser_tests.cpp)
 target_link_libraries(packet_parser_tests PRIVATE netforge_packet)
 add_test(NAME legacy_packet_parser COMMAND packet_parser_tests)
+
+add_executable(dpdk_policy_test tests/dpdk_policy_test.cpp)
+target_link_libraries(dpdk_policy_test PRIVATE netforge_core)
+add_test(NAME dpdk_policy_binding COMMAND dpdk_policy_test ${CMAKE_CURRENT_SOURCE_DIR})

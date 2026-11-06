@@ -120,3 +120,19 @@ Verified PCAP evidence: dpdk-pcap-20261106-105952-17272. Full17-test Release
 reference gate: checksum-20261106-105900-17225. Future runs default to this
 repaired reference cache and build the current policy compiler against its
 source-verified core archive. Historical failed captures remain retained.
+
+
+## General supported capture-policy binding
+
+PCAP mode now accepts the shared compiler's multiple-rule/multiple-route subset
+(up to32 rules/16 routes), with exactly two logical ports lan1/wan2 and all routes
+emitting towan2. The fixed synthetic corpus mode retains its one-rule/one-route
+fixture constraint. Before EAL initialization, the runtime recompiles configuration
+and compares canonical policy fields, rejecting mismatched MACs/actions/routes
+or unsupported state/NAT/discovery. Native padding and inactive slots are not
+policy identity. This prevents a separately supplied blob from silently applying
+different policy than the configuration used by the reference oracle.
+
+Native ASan/UBSan binding tests passed. Actual multi-policy capture acceptance
+is pending the expanded dpdk-pcap-batch.sh. This does not add a continuous NIC
+service, hot reload, remote API or stateful DPDK semantics.

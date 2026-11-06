@@ -1105,3 +1105,15 @@ were cancelled before steps: GitHub retired that image on2026-11-02. Workflow
 updated to supported macOS15 and PR-only branch testing (push also runs onmain)
 to avoid duplicate branch/PR jobs. New cross-platform run pending. DraftPR1;
 main unchanged.
+
+
+Prepared DPDK general capture-policy integration: exact configuration-to-policy
+validation before EAL, multiple supported ACL/routes for capture mode, fixed
+fixture restriction only for corpus mode. Native ASan/UBSan test passed valid
+multiple-policy binding, config/blob mismatch, tampered MAC/action and unsupported
+SNAT/return-egress rejection. New independent actual DPDK test prepares three
+rules/two routes, four packets, byte/timestamp comparison with reference and
+pre-EAL blob/config mismatch refusal. Expanded DPDK batch execution pending;
+existing SDK/latest source-matched core reused, no dependency install/container.
+CMake adds dpdk_policy_binding (20 tests total); hosted execution not yet run
+for these new changes.
