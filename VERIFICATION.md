@@ -1133,3 +1133,16 @@ restricted DPDK runtime/SDK, serial Release build,20 CTest, actual corpus/PCAP
 and multiple-policy acceptance are executed there. Dependencies/evidence remain
 on the ephemeral runner with3-day artifact retention. Shell syntax checked;
 hosted runtime execution pending. No local Docker command has been run.
+
+
+First hosted DPDK run42221546892 passed native CI but failed x86 compilation:
+rte_memcpy SSSE3 intrinsics needed the packaged x86 CPU baseline. build_dpdk_ring
+now adds -march=corei7 for x86_64 only; ARM unchanged. This matches DPDK's generic
+x86 baseline (official23.11 build guide); no -march=native optimization is used.
+Rerun pending.
+
+Added --check to actual DPDK runtime (policy/config validation before EAL) and
+optional loopback capture supervisor. One fixed input/config, four jobs, pidfd
+signals, bounded logs/deadline and idempotent request IDs; finite PCAP jobs only.
+Linux lifecycle tests and real HTTP/DPDK acceptance are prepared in hosted CI.
+Python/shell syntax checks passed; these new lifecycle paths are not yet verified.

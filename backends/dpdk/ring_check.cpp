@@ -149,7 +149,7 @@ static void batch(Resources& resources, const nf_policy& policy, unsigned first,
 int main(int argc, char** argv) {
     bool initialized = false, completed = true;
     try {
-        require(argc == 3 || (argc == 7 && std::string(argv[3]) == "--pcap"),
+        require(argc == 3 || (argc == 4 && std::string(argv[3]) == "--check") || (argc == 7 && std::string(argv[3]) == "--pcap"),
                 "Usage: nf-dpdk-ring CONFIG POLICY.bin [--pcap INPUT.pcap ROUTED.pcap PUNTED.pcap]");
         std::unique_ptr<nf_capture::Reader> capture;
         if (argc == 7) capture = std::make_unique<nf_capture::Reader>(argv[4]);
@@ -163,6 +163,9 @@ int main(int argc, char** argv) {
         netforge::dpdk::validate_binding(config, policy);
         // The synthetic corpus has a fixed fixture; external capture mode accepts
         // all supported compiler rules/routes rather than imposing that fixture.
+        if (argc == 4) {
+            std::cout << "{\"valid\":true,\"generation\":" << config.generation << "}\n"; return 0;
+        }
         if (!capture) require(policy.rule_count == 1 && policy.route_count == 1 && policy.rules[0].ingress == 1 &&
                 policy.routes[0].ifindex == 2 && !policy.default_allow, "compiled acceptance policy bindings");
         cpu_set_t cpus; CPU_ZERO(&cpus);

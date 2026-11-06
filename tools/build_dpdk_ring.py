@@ -34,6 +34,10 @@ arguments = ["g++", "-std=c++20", "-O2", "-Wall", "-Wextra", "-Wpedantic", "-Wer
              *core_inputs,
              "-Wl,--no-as-needed", *libraries,
              "-Wl,--as-needed", "-pthread", "-ldl", "-o", str(output)]
+# DPDK23.11 x86 baseline is Nehalem/corei7 (SSE4.2); ARM keeps toolchain default.
+# Use the packaged x86 baseline rather than enabling the build host's ISA.
+if triplet.startswith('x86_64'):
+    arguments.insert(1, '-march=corei7')
 for directory in sorted({str(pathlib.Path(path).parent) for path in libraries}):
     arguments.append("-Wl,-rpath," + directory)
 subprocess.run(arguments, check=True, timeout=120)

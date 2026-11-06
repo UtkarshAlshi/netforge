@@ -77,3 +77,8 @@ add_test(NAME legacy_packet_parser COMMAND packet_parser_tests)
 add_executable(dpdk_policy_test tests/dpdk_policy_test.cpp)
 target_link_libraries(dpdk_policy_test PRIVATE netforge_core)
 add_test(NAME dpdk_policy_binding COMMAND dpdk_policy_test ${CMAKE_CURRENT_SOURCE_DIR})
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  add_test(NAME capture_supervisor COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/capture_agent_test.py
+    $<TARGET_FILE:nf-xdp-compile> ${CMAKE_CURRENT_SOURCE_DIR})
+endif()

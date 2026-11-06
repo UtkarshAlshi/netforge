@@ -22,6 +22,7 @@ NETFORGE_DPDK_CORE_ARCHIVE=/tmp/netforge-build/libnetforge_core.a python3 "$src/
 /tmp/nf-dpdk-ring "$src/examples/xdp-veth.conf" /tmp/policy.bin
 python3 "$src/tests/dpdk_pcap_test.py" /tmp/nf-dpdk-ring "$src/examples/xdp-veth.conf" /tmp/policy.bin /tmp/netforge-build/netforge "$out/capture-cases"
 python3 "$src/tests/dpdk_config_test.py" /tmp/nf-dpdk-ring /tmp/netforge-build/nf-xdp-compile /tmp/netforge-build/netforge "$src" "$out/multi-cases"
+python3 "$src/tests/capture_agent_http_test.py" /tmp/nf-dpdk-ring /tmp/netforge-build/nf-xdp-compile "$out/multi-cases/multi.conf" "$out/multi-cases/input.pcap" "$src" "$out/capture-service.json"
 cp "$src/SOURCE-MANIFEST.sha256" "$out/SOURCE-MANIFEST.sha256"
 cp /tmp/netforge-sdk/install.log "$out/dependencies.log"
 echo 'PASS: hosted real DPDK corpus, capture, policy identity, multi-route parity and bounded cleanup'
