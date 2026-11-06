@@ -24,9 +24,8 @@ python3 tools/check_docs.py
 ```
 
 The manifest intentionally includes authored source/docs and small sanitized
-results, not generated builds, secrets or private deployment files. CI runs native
-Linux/macOS checks and real DPDK/private-veth acceptance in a capped disposable
-Linux container. A green badge corresponds to that workflow, not hardware research.
+results, not generated builds, secrets or private deployment files. Automatic CI runs Linux portable checks; manual **Run workflow** additionally
+runs macOS and real DPDK/private-veth acceptance in a capped disposable container. A green badge corresponds to that workflow, not hardware research.
 
 Preserve historical records under `docs/archive/`; do not present their pending
 milestone text as current setup guidance. Never prune unrelated Docker resources,

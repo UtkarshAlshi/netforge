@@ -28,3 +28,7 @@ The demo now falls back to the existing C++20 compiler when CMake is missing.
 Preflight validates tools/output/binary before creating a destination. Adds clear
 recovery instructions for an earlier empty output directory and tests the direct
 build on Linux/macOS. No global tools, npm settings or OS configuration are changed.
+
+Automatic CI now uses Linux portable checks; macOS and live-backend acceptance
+remain available through explicit Run workflow. Adds same-ref concurrency to
+cancel obsolete runs. No historical failures or test capability are erased.
