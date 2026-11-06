@@ -38,3 +38,4 @@ struct ParseResult {
 [[nodiscard]] const char* parse_error_name(ParseError error) noexcept;
 
 }  // namespace netforge
+

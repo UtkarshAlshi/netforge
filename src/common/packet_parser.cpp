@@ -76,3 +76,4 @@ const char* parse_error_name(ParseError error) noexcept {
   return "unknown parse error";
 }
 }  // namespace netforge
+

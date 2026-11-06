@@ -14,3 +14,4 @@ Recommended baseline: an Ubuntu LTS or Fedora VM with four or more cores, 16 GB 
 - Result: source review and shell-script inspection were performed here; Linux compilation and namespace integration are intentionally not claimed as completed.
 
 This document must be updated whenever benchmarks or integration tests are run. Results without an environment record are not valid performance evidence.
+

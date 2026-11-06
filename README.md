@@ -1,39 +1,114 @@
-# NetForge
+# NetForge — programmable userspace IPv4 appliance
 
-NetForge is a correctness-first programmable network appliance and systems-learning program.  Its common policy model will be implemented and evaluated over Linux packet sockets, XDP/eBPF, and (later) DPDK.
+**NetForge0.1.0 portable engineering release. Hardware research is explicitly deferred.**
 
-## Current milestone: M0–M1
+NetForge is a dependency-light C++20 packet-processing appliance. It combines
+Ethernet/IPv4 parsing, static LPM routing, ordered ACLs, UDP/TCP connection tracking,
+SNAT/port translation, virtual services (round robin, weighted round robin,
+least-connections and rendezvous policies), backend draining, ARP replies, related ICMP
+reverse NAT, versioned
+configuration and reason-coded counters. The same processing core serves an offline
+hex-frame replay tool and a Linux AF_PACKET adapter.
 
-This repository currently contains a reproducible Linux network-namespace lab and a deliberately small, bounds-checked Ethernet/IPv4 decoding laboratory.  It is not yet a router; building one before the packet model, tests, and lab are trustworthy would be premature.
+This release is a correctness-first reference dataplane. It is not yet a validated
+high-performance, production-grade firewall. Restricted XDP and DPDK backends, bounded two-worker state ownership and active
+TCP health checks have verified acceptance gates. They have distinct capability
+boundaries. A bounded reference/DPDK virtual-network comparison is verified; broader
+hardware/XDP/Linux-kernel experiments and research publication are deferred. The reference
+control plane adds loopback agents, explicit mTLS remote nodes and journaled fleet rollout; it
+does not implement distributed consensus. See [control/README.md](control/README.md).
 
-## Build and test
+## Quick start (no Docker, privileges or downloads)
 
-```bash
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
-cmake --build build
-ctest --test-dir build --output-on-failure
+Requires a C++20 Clang compiler and Python 3. The shell build is serial; no build
+system package is required. From this repository:
+
+```sh
+sh test.sh
+./build/netforge check examples/appliance.conf
+python3 tools/generate_demo.py build/demo
+./build/netforge replay examples/appliance.conf lan build/demo/service.hex
 ```
 
-For sanitizer coverage on Clang or GCC:
+Fixture generation uses exclusive creation: use a new output directory on another
+run. The three service packets select backend .130, then .131, then .130 again
+because the last packet belongs to the first flow. JSON decisions go to stdout;
+Prometheus-format counters go to stderr. Example addresses and MACs are synthetic.
 
-```bash
-cmake -S . -B build-sanitize -DNETFORGE_ENABLE_SANITIZERS=ON
-cmake --build build-sanitize && ctest --test-dir build-sanitize --output-on-failure
+In the shared Codex workspace, keep build artifacts in work/ instead:
+
+```sh
+NETFORGE_BUILD_DIR="$PWD/work/netforge-build" sh outputs/netforge/test.sh
 ```
 
-## Repository guide
+Default builds enable AddressSanitizer and UndefinedBehaviorSanitizer. Use
+`SANITIZE=0 sh build.sh` for an optimized build in a separate build directory.
+Compiler include-environment overrides are cleared only for compiler processes.
+No global shell or OS setting is changed.
 
-- [`ARCHITECTURE.md`](ARCHITECTURE.md) — evolving system boundaries and invariants
-- [`docs/ROADMAP.md`](docs/ROADMAP.md) — gated milestones and exit criteria
-- [`docs/decisions/`](docs/decisions/) — architecture decision records
-- [`docs/learning-log.md`](docs/learning-log.md) — concepts demonstrated and open questions
-- [`lab/`](lab/) — isolated namespace topology and capture instructions
-- [`src/`](src/) — packet-model code, later datapaths and control plane
-- [`tests/`](tests/) — unit, packet-vector, integration, and fault tests
+CMake/CTest is also supported (CMake 3.20+):
 
-## Non-negotiable rules
+```sh
+cmake -S . -B build-cmake -DNETFORGE_SANITIZERS=ON
+cmake --build build-cmake --parallel 1
+ctest --test-dir build-cmake --output-on-failure
+```
 
-1. Packet data is untrusted; parser reads require a preceding bounds check.
-2. Correctness and packet-level evidence precede optimization claims.
-3. Every feature is introduced with a design note, tests, and an observable experiment.
-4. Measurements are retained with environment metadata; no fabricated performance claims.
+The maintained full portable verification entry point is:
+
+```sh
+python3 tools/verify.py --sanitizers --output /absolute/new/netforge-verification
+```
+
+It requires CMake3.20+, C++20, Python3 and OpenSSL CLI, builds serially and retains
+its reports, verified source archive and offline demo in a new directory. It
+installs nothing and makes no NIC or Docker changes. Hosted CI also exercises
+real DPDK ring/PCAP and AF_PACKET PMDs and private-veth control/worker faults in a
+512-MiB/no-swap/.5-CPU container.
+
+## Commands
+
+| Command | Purpose |
+|---|---|
+| `netforge check CONFIG` | Parse and validate a complete config |
+| `netforge replay CONFIG INGRESS HEX_FILE` | One Ethernet frame per hex line; emit decisions and transformed frames |
+| `netforge bench CONFIG INGRESS HEX_FILE N` | Warm up then measure the first frame N times; offline only |
+| `netforge run CONFIG` | Linux-only AF_PACKET event loop; requires CAP_NET_RAW |
+
+Live mode needs dedicated lab interfaces with matching MACs, no kernel ownership
+of appliance IPs, and kernel forwarding disabled in that namespace. The program
+checks these conditions and does not configure interfaces or change sysctls.
+See OPERATIONS.md before running it. Do not run it against your Mac's interfaces.
+
+## Verification and limits
+
+Tests exercise exact parser boundaries, independent checksum oracles, routing,
+ordered ACLs, bidirectional UDP/TCP translation, service affinity/draining, exhaustion, expiry,
+configuration rollback, pinned generations, ARP, ICMP, MTU handling and malformed
+frames. CLI tests exercise real subprocesses and independent Python decoding.
+See STATUS.md for what was actually executed versus what remains unverified.
+
+The existing Docker laboratory and this application are separate: successful
+Linux-kernel pings do not prove the C++ appliance forwarded anything.
+
+## Documentation
+
+- ARCHITECTURE.md and DESIGN.md: packet/configuration lifecycles and decisions.
+- CONFIGURATION.md: exact grammar and matching semantics.
+- NETWORKING.md: ownership, byte order, checksums, forwarding and exceptions.
+- SECURITY.md and OPERATIONS.md: limits, capabilities and failure behavior.
+- PERFORMANCE.md and BENCHMARKS.md: honest measurement scope and harness.
+- RESEARCH.md and ROADMAP.md: remaining research and engineering milestones.
+- STATUS.md: release acceptance gates and resume wording.
+- CONTRIBUTING.md: build/test/review workflow.
+
+
+## Original repository foundation
+
+The M0–M1 parser laboratory remains in src/common, tests/unit and packet_decode;
+CMake also runs its legacy_packet_parser test. Original decision records and lab
+notes remain under docs/ and lab/. Their historical milestone descriptions are
+not current appliance status; see STATUS.md/REMAINING.md for the current ledger.
+The original architecture note is retained as docs/architecture-m1.md. Historical
+namespace scripts require their documented Linux environment; the scoped Docker
+lab tool in LAB-SETUP.md is the current Mac-lab provisioning path.
