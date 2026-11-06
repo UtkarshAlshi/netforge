@@ -59,7 +59,7 @@ with tempfile.TemporaryDirectory() as temp:
         openssl('x509', '-req', '-in', role + '.csr', '-CA', 'ca.pem', '-CAkey', 'ca.key',
                 '-CAcreateserial', '-days', '1', '-extfile', 'extensions', '-out', role + '.pem')
         (root / (role + '.key')).chmod(0o600)
-    live = len(sys.argv) == 3
+    live = len(sys.argv) >= 3
     if live:
         from agent import Agent
         initial = pathlib.Path(sys.argv[1]) / 'examples/workers-veth.conf'
@@ -97,6 +97,16 @@ with tempfile.TemporaryDirectory() as temp:
             assert engine.generation == 2
             if live:
                 assert len(engine.publication_audit()['events']) == 1
+                if len(sys.argv) == 4:
+                    packets = subprocess.run([sys.argv[3]], capture_output=True, text=True, check=True, timeout=8)
+                    print(packets.stdout, end='', flush=True)
+                    metrics = engine.snapshot()
+                    prefix = 'netforge_backend_new_flows{generation="2",service="0",backend="0"} '
+                    assert prefix + '4\n' in metrics
+                    for direction in ('forward', 'reverse'):
+                        key = 'netforge_backend_' + direction + '_bytes{generation="2",service="0",backend="0"} '
+                        assert int(next(line[len(key):] for line in metrics.splitlines() if line.startswith(key))) > 0
+                    print('PASS: real TCP service new-flow and bidirectional per-backend byte metrics correlate with four handshakes')
                 assert 'netforge_tx_failures_total 0\n' in engine.snapshot()
             else:
                 assert engine.posts == 1
@@ -117,5 +127,5 @@ with tempfile.TemporaryDirectory() as temp:
 print('PASS: real TLS1.3 mutual authentication, bearer and node binding, private-key refusal, static membership and journaled idempotent rollout')
 print('PASS: missing client certificate, untrusted server, wrong node/token and changed transport plan refused')
 
-if len(sys.argv) == 3:
+if len(sys.argv) >= 3:
     print('PASS: actual reference dataplane acknowledged TLS journal publication, idempotent reconciliation and metrics on private veth')

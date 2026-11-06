@@ -124,6 +124,9 @@ private:
     Counters counters_;
     // First16 rules only; generation-scoped diagnostics, fixed memory/series budget.
     std::array<std::uint64_t, 16> rule_evaluations_{}, rule_matches_{};
+    struct BackendCounts { std::uint64_t new_flows = 0, forward_bytes = 0, reverse_bytes = 0; };
+    std::array<BackendCounts, 4> backend_counts_{};
+    void account_backend(const Flow& flow, bool reverse, bool fresh, std::size_t bytes);
     std::map<std::string, std::size_t> service_cursor_;
     std::uint64_t clock_ = 0, error_window_ = 0;
     unsigned errors_in_window_ = 0;

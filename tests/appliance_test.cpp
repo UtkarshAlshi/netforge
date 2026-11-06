@@ -272,6 +272,17 @@ int main(int argc, char** argv) {
     require(read32(lb_reply.frame, 26) == vip && read32(lb_reply.frame, 30) == a &&
             read16(lb_reply.frame, 36) == 1111, "reverse service translation");
 
+    const auto backend_label = "{generation=\"1\",service=\"0\",backend=\"0\"} ";
+    require(lb.metrics().find(std::string("netforge_backend_new_flows") + backend_label + "1\n") != std::string::npos &&
+            lb.metrics().find(std::string("netforge_backend_forward_bytes") + backend_label + std::to_string(first.frame.size() + pinned.frame.size()) + "\n") != std::string::npos &&
+            lb.metrics().find(std::string("netforge_backend_reverse_bytes") + backend_label + std::to_string(lb_reply.frame.size()) + "\n") != std::string::npos,
+            "backend new-flow and bidirectional emitted-byte attribution");
+    auto next_backend = config; next_backend.generation = 2;
+    Appliance backend_reload(config); backend_reload.process("lan", udp(config, "lan", a, vip, 1111), 0);
+    backend_reload.reload(next_backend);
+    backend_reload.process("lan", udp(config, "lan", a, vip, 1111), 1);
+    require(backend_reload.metrics().find("netforge_backend_forward_bytes{generation=\"2\",service=\"0\",backend=\"0\"} 0\n") != std::string::npos,
+            "old-generation flow bytes never relabelled to current backend");
     // Scheduler decisions participate in the real NAT/state pipeline.
     auto weighted_config = config;
     weighted_config.services[0].scheduler = Scheduler::weighted_round_robin;

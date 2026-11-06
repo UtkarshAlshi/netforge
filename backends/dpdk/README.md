@@ -146,7 +146,7 @@ SDK/runtime. Invoke `nf-dpdk-live CONFIG POLICY.bin IN_IFACE OUT_IFACE SECONDS`.
 The checked config must bind lan/wan to those exact interfaces; policy bindings
 remain logical1/2. Duration is1..300 seconds, with early SIGTERM/SIGINT stop. No
 PCI devices or hugepages are used. One lcore,32-MiB EAL,255 mbufs,32-packet bursts,
-one queue/port and256 PACKET_MMAP frames bound allocations. Idle polling sleeps
+2304-byte mbuf data rooms, one queue/port and256 PACKET_MMAP frames bound allocations. Idle polling sleeps
 one millisecond. This is a safe functional service, not a tuned line-rate design.
 Successful TX transfers ownership to the PMD; unsent mbufs are freed once.
 Counters distinguish routed, policy drops, exceptions discarded and unsent TX.

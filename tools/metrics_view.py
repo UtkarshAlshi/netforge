@@ -37,7 +37,8 @@ def render(values):
     rows = []
     for name, value in sorted(values.items()):
         base = name.split('{', 1)[0]
-        group = ('Backend health' if base.startswith('netforge_health_') else
+        group = ('Backend traffic' if base.startswith('netforge_backend_') else
+                 'Backend health' if base.startswith('netforge_health_') else
                  'Kernel decisions' if base.startswith('netforge_xdp_') else
                  'Socket I/O' if base.startswith(('netforge_port_', 'netforge_tx_', 'netforge_rx_', 'netforge_packet_socket_')) else
                  'Process' if base.startswith('netforge_process_') else

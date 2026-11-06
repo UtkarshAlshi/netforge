@@ -60,7 +60,7 @@ int main(int argc, char** argv) {
         uint64_t received = 0, routed = 0, denied = 0, exceptions = 0, sent = 0, unsent = 0;
         {
             Devices devices;
-            devices.pool = rte_pktmbuf_pool_create("nf_live_pool", 255, 0, 0, 2048, SOCKET_ID_ANY);
+            devices.pool = rte_pktmbuf_pool_create("nf_live_pool", 255, 0, 0, 2304, SOCKET_ID_ANY);
             require(devices.pool, "bounded live pool creation");
             for (unsigned i = 0; i < 2; ++i) {
                 const char* name = i ? "net_af_packet1" : "net_af_packet0";

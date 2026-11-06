@@ -143,3 +143,13 @@ frames discarded by the userspace adapter, and differ from accepted-size RX/core
 decisions. They are not NIC-wide drops, policy denies or end-to-end delivery loss.
 See https://man7.org/linux/man-pages/man7/packet.7.html for reset semantics.
 Hosted forced-pressure acceptance is prepared, not yet passed.
+
+Reference per-backend diagnostics cover the first four service/backend pairs in
+configuration order: new admitted flows, forward emitted bytes and reverse
+emitted bytes, with generation/service/backend-index labels. These are core
+Ethernet-frame bytes before socket transmission, not successful wire delivery.
+A successful reload resets them; old-generation pinned flows remain excluded
+rather than being relabelled to a different backend. Direct SNAT traffic and
+related ICMP are excluded. `netforge_backend_series_omitted` reports remaining
+backend pairs. Storage and series count are fixed; worker/XDP/DPDK backend
+traffic series are unavailable. Health observations remain separate metrics.

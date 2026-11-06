@@ -25,7 +25,7 @@ python3 "$src/tests/dpdk_config_test.py" /tmp/nf-dpdk-ring /tmp/netforge-build/n
 python3 "$src/tests/capture_agent_http_test.py" /tmp/nf-dpdk-ring /tmp/netforge-build/nf-xdp-compile "$out/multi-cases/multi.conf" "$out/multi-cases/input.pcap" "$src" "$out/capture-service.json"
 g++ -std=c++20 -O2 -Wall -Wextra -Wpedantic -Werror "$src/tools/workers_live_probe.cpp" -o /tmp/netforge-worker-probe
 python3 "$src/tests/durable_worker_live_test.py" /tmp/netforge-build/netforge /tmp/netforge-worker-probe "$src" "$out/durable-worker.json"
-python3 "$src/tests/secure_node_test.py" "$src" /tmp/netforge-build/netforge
+python3 "$src/tests/secure_node_test.py" "$src" /tmp/netforge-build/netforge /tmp/netforge-worker-probe
 NETFORGE_DPDK_AF_PACKET=1 NETFORGE_DPDK_CORE_ARCHIVE=/tmp/netforge-build/libnetforge_core.a python3 "$src/tools/build_dpdk_ring.py" "$src" /tmp/netforge-sdk /tmp/nf-dpdk-live
 python3 "$src/tests/dpdk_live_test.py" /tmp/nf-dpdk-live /tmp/netforge-build/nf-xdp-compile /tmp/netforge-build/netforge "$src" "$out/dpdk-live.json"
 cp "$src/SOURCE-MANIFEST.sha256" "$out/SOURCE-MANIFEST.sha256"

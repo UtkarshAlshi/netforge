@@ -68,7 +68,7 @@ void Appliance::reload(Config config) {
     if (generations.size() > 8) throw std::runtime_error("too many flow-pinned generations; wait for expiry");
     auto next = std::make_shared<const Config>(std::move(config));
     config_ = std::move(next); service_cursor_.clear();
-    rule_evaluations_.fill(0); rule_matches_.fill(0);
+    rule_evaluations_.fill(0); rule_matches_.fill(0); backend_counts_.fill({});
 }
 Decision Appliance::finish(Decision decision) {
     ++counters_.reasons[decision.reason];
@@ -409,6 +409,7 @@ Decision Appliance::process(const std::string& ingress, std::span<const std::uin
         peak_flows_ = std::max(peak_flows_, flows_.size());
         if (service) ++service_cursor_[service_key];
     }
+    if (new_flow || matched) account_backend(new_flow ? flows_.back() : *matched, reply_direction, new_flow, out.size());
     const std::string reason = new_flow ? (header.protocol == 6 ? "new_tcp_mapping" : "new_udp_mapping") :
         matched ? (header.protocol == 6 ? "tracked_tcp" : "tracked_udp") : "forward";
     return finish({reason, route->port, std::move(out)});
@@ -527,6 +528,26 @@ std::vector<Decision> Appliance::maintenance(std::uint64_t now) {
     }
     return output;
 }
+void Appliance::account_backend(const Flow& flow, bool reverse, bool fresh, std::size_t bytes) {
+    // Generation-scoped counters never relabel traffic pinned to an old config.
+    if (flow.config != config_) return;
+    std::size_t index = 0;
+    for (const auto& service : config_->services) {
+        for (const auto& backend : service.backends) {
+            if (index >= backend_counts_.size()) return;
+            if (flow.protocol == service.protocol && flow.ingress == service.ingress &&
+                flow.original.destination == service.vip && flow.original.destination_port == service.port &&
+                flow.translated.destination == backend.ip && flow.translated.destination_port == backend.port) {
+                auto& counts = backend_counts_[index];
+                if (fresh) ++counts.new_flows;
+                if (reverse) counts.reverse_bytes += bytes;
+                else counts.forward_bytes += bytes;
+                return;
+            }
+            ++index;
+        }
+    }
+}
 std::string Appliance::metrics() const {
     std::ostringstream out;
     out << "netforge_received_total " << counters_.received << '\n'
@@ -566,6 +587,20 @@ std::string Appliance::metrics() const {
         out << "netforge_acl_rule_hits{generation=\"" << config_->generation << "\",rule=\"" << index
             << "\"} " << rule_matches_[index] << '\n';
     }
+    std::size_t backend_index = 0, backend_total = 0;
+    for (std::size_t service_index = 0; service_index < config_->services.size(); ++service_index) {
+        const auto& service = config_->services[service_index];
+        backend_total += service.backends.size();
+        for (std::size_t index = 0; index < service.backends.size() && backend_index < backend_counts_.size(); ++index, ++backend_index) {
+            const auto& counts = backend_counts_[backend_index];
+            const auto labels = "{generation=\"" + std::to_string(config_->generation) + "\",service=\"" +
+                std::to_string(service_index) + "\",backend=\"" + std::to_string(index) + "\"} ";
+            out << "netforge_backend_new_flows" << labels << counts.new_flows << '\n'
+                << "netforge_backend_forward_bytes" << labels << counts.forward_bytes << '\n'
+                << "netforge_backend_reverse_bytes" << labels << counts.reverse_bytes << '\n';
+        }
+    }
+    out << "netforge_backend_series_omitted " << backend_total - backend_index << '\n';
     for (const auto& [reason, count] : counters_.reasons)
         out << "netforge_decisions_total{reason=\"" << reason << "\"} " << count << '\n';
     return out.str();
