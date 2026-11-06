@@ -7,9 +7,11 @@ arbitrary packet bytes into protocol structs. Ethernet/IP input lifetime remains
 caller-owned; decisions own output buffers. This costs copying and allocation but
 makes ownership explicit and supports sanitizers and deterministic tests.
 
-## D002: single worker and bounded state
+## D002: single-owner reference baseline and bounded state
 
-Use linear LPM and linear flow lookup for a transparent reference implementation.
+The reference baseline uses linear LPM and default linear flow lookup. Optional
+indexed flow lookup and the separate one/two-owner worker runtime are implemented;
+see their current configuration and ownership contracts.
 Default flow capacity is 1024 (maximum 65536), not an unbounded hash table. Table
 scan and expiry are O(F); route lookup is O(R). NAT allocation builds a bounded
 used-port set before searching the configured range. This is not a high-throughput

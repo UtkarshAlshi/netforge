@@ -1,6 +1,6 @@
 # Changelog
 
-##0.1.0 — 2026-11-06
+## 0.1.0 — 2026-11-06
 
 Portable C++20 IPv4 dataplane with stateful UDP/TCP NAT and virtual services;
 bounded workers, transactional reload, authenticated control/health/audit,

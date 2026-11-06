@@ -4,11 +4,13 @@ IPv4 header length comes from IHL in four-byte units, while total length include
 header and payload. Ethernet padding past IP total length is ignored. The header
 checksum covers the entire IPv4 header, not payload. UDP/TCP checksums include a
 pseudoheader with addresses, protocol and transport length. IPv4 UDP checksum zero
-is accepted as absent; translated/tracked output receives a generated checksum.
+is accepted as absent and preserved for untranslated routing; translated output
+receives a repaired checksum.
 
 The appliance checks UDP length against the full IP payload (strict equality),
 TCP header bounds and checksum, and ICMP length/checksum. It does not implement a
-TCP endpoint, TCP sequence validation or a full ICMP protocol suite. A parseable
+TCP endpoint, full TCP sequence-window firewall or complete ICMP protocol suite.
+Opt-in tracking does validate the documented handshake/ACK/FIN/RST transitions. A parseable
 packet is not necessarily forwardable.
 
 Transit forwarding leaves destination IP unchanged except for service DNAT,
