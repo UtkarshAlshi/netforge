@@ -33,7 +33,7 @@ marks missing evidence explicitly. Historical performance is source-specific
 offline core timing, not physical NIC throughput or network latency.
 
 
-Hosted CI workflow is prepared for Ubuntu24.04/macOS14 sanitizer builds, CTest,
+Hosted CI workflow is prepared for Ubuntu24.04/macOS15 sanitizer builds, CTest,
 lab-plan safety, source-package verification/extraction and bounded offline demo
 artifacts. It has not been remotely executed. A repository destination and
 publication authorization must be established before claiming hosted acceptance.

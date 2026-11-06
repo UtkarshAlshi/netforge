@@ -1096,3 +1096,12 @@ parser/tests/tools/lab/design notes preserved locally for integration; original
 architecture retained in docs/architecture-m1.md. CMake now includes the legacy
 parser test alongside18 current tests. Hosted execution and review-branch
 publication are pending; main has not been changed.
+
+
+Hosted Ubuntu job127759559901 passed all19 CTest tests plus provisioning-plan
+safety, source package/extraction, operator demo and artifact upload on commit
+2da6746977071aa3c549e469e4fe2242d2d0e542 (run42177602248). Initial macOS14 jobs
+were cancelled before steps: GitHub retired that image on2026-11-02. Workflow
+updated to supported macOS15 and PR-only branch testing (push also runs onmain)
+to avoid duplicate branch/PR jobs. New cross-platform run pending. DraftPR1;
+main unchanged.
