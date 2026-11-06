@@ -29,7 +29,8 @@ def intent(nodes):
         generation = int(versions[0][0])
         if not node['expected_generation'] < generation <= 0xffffffff:
             raise ValueError('candidate must advance expected generation')
-        result.append({'name': node['name'], 'url': node['url'],
+        result.append({**({'transport_identity': node['transport_identity']} if 'transport_identity' in node else {}),
+                       'name': node['name'], 'url': node['url'],
                        'expected': node['expected_generation'], 'generation': generation,
                        'sha256': digest(node['body'].encode())})
     return result

@@ -42,7 +42,10 @@ def load_plan(path):
 
 
 def request(node, method, path, body=None):
-    connection = http.client.HTTPConnection("127.0.0.1", node["port"], timeout=8)
+    connection = (http.client.HTTPSConnection(node["host"], node["port"], timeout=8,
+                                               context=node["tls_context"])
+                  if "tls_context" in node else
+                  http.client.HTTPConnection("127.0.0.1", node["port"], timeout=8))
     try:
         connection.request(method, path, body=body, headers={"Authorization": "Bearer " + node["token"],
                                                             "Content-Type": "application/json"})
@@ -53,6 +56,8 @@ def request(node, method, path, body=None):
         result = json.loads(raw)
         if response.status != 200:
             raise RuntimeError("agent rejected request: " + str(result.get("error", response.status)))
+        if node.get("node_id") is not None and result.get("node_id") != node["node_id"]:
+            raise RuntimeError("authenticated endpoint node identity mismatch")
         return result
     finally:
         connection.close()

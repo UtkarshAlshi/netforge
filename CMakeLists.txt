@@ -85,3 +85,6 @@ endif()
 
 add_test(NAME durable_worker COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/durable_worker_test.py
   $<TARGET_FILE:netforge> ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_test(NAME secure_nodes COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/secure_node_test.py
+  ${CMAKE_CURRENT_SOURCE_DIR})
