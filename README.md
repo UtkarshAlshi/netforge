@@ -38,8 +38,9 @@ or a claim of physical-NIC line rate. [Capabilities and limits →](docs/capabil
 
 ## Run the demo
 
-Prerequisites: **CMake3.20+, a C++20 compiler, Python3.10+ and a native build tool**
-(Make or Ninja). Full verification also needs the OpenSSL CLI.
+Demo prerequisites: **a C++20 compiler and Python3.9+**. CMake is optional for
+the demo: it falls back to a serial direct compiler build when CMake is missing.
+Full verification needs CMake3.20+, Make/Ninja, Python3.10+ and OpenSSL CLI.
 See [installation checks](docs/getting-started.md) if these are not installed.
 
 ```sh
@@ -48,7 +49,7 @@ cd netforge
 python3 tools/demo.py --output ../netforge-demo
 ```
 
-The launcher builds only the reference executable, serially, and verifies five
+The launcher checks prerequisites before creating output, builds only the reference executable serially, and verifies five
 small packet scenarios. It creates a new sibling directory and prints the path
 to **`../netforge-demo/packets/index.html`**. Open that file in any browser; on
 macOS you can run:

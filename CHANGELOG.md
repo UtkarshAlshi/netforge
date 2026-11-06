@@ -21,3 +21,10 @@ chronology into the archive so it cannot be mistaken for current instructions.
 The packet-engine behavior is unchanged by this presentation refresh.
 
 [Historical implementation chronology](docs/archive/development/changelog.md).
+
+## Demo prerequisite recovery
+
+The demo now falls back to the existing C++20 compiler when CMake is missing.
+Preflight validates tools/output/binary before creating a destination. Adds clear
+recovery instructions for an earlier empty output directory and tests the direct
+build on Linux/macOS. No global tools, npm settings or OS configuration are changed.

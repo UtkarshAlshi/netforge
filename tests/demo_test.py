@@ -1,5 +1,6 @@
 """Actual portable replay → browser walkthrough and renderer trust boundaries."""
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -26,6 +27,14 @@ with tempfile.TemporaryDirectory() as temp:
     else: raise AssertionError('unverified result rendered as success')
     rerun = subprocess.run([sys.executable, str(project / 'tools/demo.py'), '--binary', binary, '--output', str(output)], capture_output=True, timeout=5)
     assert rerun.returncode != 0, 'existing output overwritten'
+# Missing tools must fail before creating the requested output directory.
+with tempfile.TemporaryDirectory() as temp:
+    destination = Path(temp) / 'must-not-exist'
+    environment = dict(os.environ, PATH='', CXX='missing-netforge-compiler')
+    for mode in ('cmake', 'direct'):
+        result = subprocess.run([sys.executable, str(project / 'tools/demo.py'), '--output', str(destination),
+                                 '--build-system', mode], env=environment, capture_output=True, text=True, timeout=5)
+        assert result.returncode != 0 and not destination.exists() and 'error:' in result.stderr
 raw = (project / 'results/portable-0.1.0/network-trials.json').read_bytes()
 summary = summarize(raw); assert summary['verified_packets'] == 3072 and len(summary['conditions']) == 24
 altered = json.loads(raw); altered['trials'][0]['packets_received'] = 63
